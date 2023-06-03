@@ -2,11 +2,11 @@ import { IBrgy } from "./brgy.interface";
 
 export default {}
 
-type UserType = 'admin' | 'user'
+type UserRole = 'admin' | 'user'
 export interface IUser {
   name: string;
   brgy?: IBrgy;
-  userType: UserType
+  role: UserRole
   password?: string;
   email: string;
   phoneNumber?: number;

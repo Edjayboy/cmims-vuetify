@@ -1,15 +1,9 @@
-<template>
-  <MainContent icon="medical_services">
-    <template #title>Manage Inventory Items</template>
-    <TableList :headers="headers" :items="items" />
-  </MainContent>
-</template>
-
 <script lang="ts" setup>
-import TableList from '@/components/base/TableList.vue';
 import { IItem } from '@/interfaces/item.interface';
 import { ITableHeader } from '@/interfaces/theme/table.interface';
 import MainContent from '@/layouts/MainContent.vue';
+import { ref } from 'vue';
+import { VDataTable } from 'vuetify/labs/VDataTable'
 
 const headers: ITableHeader[] = [
   {
@@ -74,4 +68,17 @@ const items: IItem[] = [
   },
 ]
 
+const search = ref<string>('')
 </script>
+
+<template>
+  <MainContent icon="medical_services">
+    <template #title>Manage Inventory Items</template>
+    <v-text-field v-model="search" append-icon="search" label="Search" single-line hide-details></v-text-field>
+    <br />
+    <v-data-table density="comfortable" :headers="headers" :items="items" item-value="name" class="elevation-0"
+      :search="search">
+    </v-data-table>
+  </MainContent>
+</template>
+
