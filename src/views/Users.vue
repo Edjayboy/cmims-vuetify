@@ -1,6 +1,6 @@
 <template>
-  <MainContent icon="dashboard">
-    <template #title>Dashboard</template>
+  <MainContent icon="manage_accounts">
+    <template #title>Manage Users</template>
   </MainContent>
 </template>
 

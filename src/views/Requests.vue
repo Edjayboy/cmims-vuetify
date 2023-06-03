@@ -1,6 +1,6 @@
 <template>
-  <MainContent icon="dashboard">
-    <template #title>Dashboard</template>
+  <MainContent icon="fact_check">
+    <template #title>Manage Requests</template>
   </MainContent>
 </template>
 

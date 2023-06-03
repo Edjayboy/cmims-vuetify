@@ -8,8 +8,8 @@
 
     <v-navigation-drawer v-model="drawer">
       <v-list>
-        <v-list-item v-for="(nav, index) in navigation" :key="index" :prepend-icon="nav.icon" :title="nav.label" :value="index"
-          :to="nav.link"></v-list-item>
+        <v-list-item v-for="(nav, index) in navigation" :key="index" :prepend-icon="nav.icon" :title="nav.label"
+          :value="index" :to="nav.link"></v-list-item>
       </v-list>
     </v-navigation-drawer>
 
@@ -27,14 +27,24 @@ import { ref } from 'vue';
 const drawer = ref<boolean>(true)
 const navigation = ref<ISidebarNavigation[]>([
   {
-    icon: 'home',
+    icon: 'dashboard',
     label: 'Dashboard',
     link: '/dashboard',
   },
   {
-    icon: 'medical_services',
+    icon: 'medical_information',
     label: 'Items',
     link: '/items',
-  }
+  },
+  {
+    icon: 'fact_check',
+    label: 'Inventory Requests',
+    link: '/requests',
+  },
+  {
+    icon: 'manage_accounts',
+    label: 'Users',
+    link: '/users',
+  },
 ])
 </script>
