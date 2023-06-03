@@ -1,4 +1,4 @@
-import { IBrand } from "./theme/brand.interface";
+import { IBrand } from "./brand.interface";
 
 export default {}
 
