@@ -34,12 +34,14 @@ const headers = ref<ITableHeader[]>([
 ])
 const users = ref<IUser[]>([
   {
+    id: 1,
     name: 'Edjay Boy Solis',
     email: 'edjayboy@gmail.com',
     phoneNumber: 1234567,
     role: 'admin'
   },
   {
+    id: 2,
     name: 'Brandon Perez',
     email: 'brandonperez@gmail.com',
     brgy: {
@@ -50,6 +52,7 @@ const users = ref<IUser[]>([
     role: 'user'
   },
   {
+    id: 3,
     name: 'Allen Lee',
     email: 'allenlee@gmail.com',
     brgy: {

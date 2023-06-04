@@ -4,6 +4,7 @@ export default {}
 
 type UserRole = 'admin' | 'user'
 export interface IUser {
+  id: string | number;
   name: string;
   brgy?: IBrgy;
   role: UserRole
