@@ -9,5 +9,5 @@ export interface IUser {
   role: UserRole
   password?: string;
   email: string;
-  phoneNumber?: number;
+  phoneNumber?: number | string;
 }

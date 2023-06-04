@@ -4,6 +4,7 @@ import { IUser } from '@/interfaces/user.interface';
 import MainContent from '@/layouts/MainContent.vue';
 import { ref } from 'vue';
 import { VDataTable } from 'vuetify/labs/VDataTable'
+import UserDialog from '@/components/dialogs/UserDialog.vue'
 
 const headers = ref<ITableHeader[]>([
   {
@@ -61,10 +62,18 @@ const users = ref<IUser[]>([
 ])
 
 const search = ref<string>('')
+const userDialog = ref()
+
+const showUserDialog = (item: unknown, isActionAdd = true) => {
+  userDialog.value.show(item, isActionAdd)
+}
 </script>
 <template>
   <MainContent icon="manage_accounts">
     <template #title>Manage Users</template>
+    <template #top-right>
+      <v-btn color="info" variant="outlined" @click="showUserDialog" prepend-icon="add">Add new user</v-btn>
+    </template>
     <v-text-field v-model="search" append-icon="search" label="Search" single-line hide-details></v-text-field>
     <br />
     <v-data-table density="comfortable" :headers="headers" :items="users" item-value="name" class="elevation-0"
@@ -74,9 +83,10 @@ const search = ref<string>('')
         {{ item.columns.brgy?.name || '-' }}
       </template>
       <!-- eslint-disable-next-line vue/valid-v-slot -->
-      <template v-slot:item.action="{}">
-        <v-btn icon="edit" flat size="small"></v-btn>
+      <template v-slot:item.action="{ item }">
+        <v-btn icon="edit" flat size="small" @click="showUserDialog(item.columns, false)"></v-btn>
       </template>
     </v-data-table>
   </MainContent>
+  <UserDialog ref="userDialog" />
 </template>

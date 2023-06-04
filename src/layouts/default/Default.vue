@@ -3,7 +3,7 @@
     <v-app-bar color="primary">
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
 
-      <v-toolbar-title>Medical Inventory Management Information System</v-toolbar-title>
+      <v-toolbar-title>Centralized Medical Inventory Management System</v-toolbar-title>
     </v-app-bar>
 
     <v-navigation-drawer v-model="drawer">

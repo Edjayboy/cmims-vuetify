@@ -8,11 +8,15 @@ defineProps<Props>()
 <template>
   <v-card height="100%" :prepend-icon="icon" fill-height>
     <template v-slot:title>
-      <h1 class="text-h5">
+      <h1 class="text-h5 float-left">
         <slot name="title">
           Page Title Here
         </slot>
       </h1>
+      <div class="float-right">
+        <slot name="top-right">
+        </slot>
+      </div>
     </template>
     <v-divider></v-divider>
     <v-card-text>
@@ -23,7 +27,8 @@ defineProps<Props>()
         sed dolor ultricies commodo. Vivamus vel diam vitae ante laoreet mollis quis eu arcu. Duis mollis sagittis ante
         nec dignissim. Fusce eros arcu, commodo bibendum dui vel, rutrum tristique urna. Mauris accumsan ac neque at
         euismod. Maecenas lacinia turpis sapien, at consectetur mauris molestie a. Integer pulvinar sed risus nec
-      ullamcorper.
-    </slot>
-  </v-card-text>
-</v-card></template>
+        ullamcorper.
+      </slot>
+    </v-card-text>
+  </v-card>
+</template>
