@@ -3,6 +3,9 @@ import { computed } from 'vue';
 import { ref } from 'vue';
 import { addUser, updateUser } from '@/services/UsersService'
 import { UserProfileUpdateDto, UserAuthentication } from '@/types/user.type';
+import { Brgy } from '@/types/brgy.type';
+import { getBrgys } from '@/services/BrgyService'
+import { onMounted } from 'vue';
 
 const dialog = ref<boolean>(false)
 const isActionAdd = ref<boolean>(true)
@@ -13,9 +16,10 @@ const role = ref<string | undefined>('')
 const email = ref<string>('')
 const password = ref<string>('')
 const phoneNumber = ref<string>('')
-const brgyId = ref<string | number>('')
+const brgyId = ref<number>()
 const userId = ref<string>('')
 const isLoading = ref<boolean>(false)
+const brgys = ref<Brgy[]>([])
 
 const show = (item: UserProfileUpdateDto, addNewRow = true) => {
   if (!addNewRow) {
@@ -24,6 +28,7 @@ const show = (item: UserProfileUpdateDto, addNewRow = true) => {
     email.value = item.email
     phoneNumber.value = item?.phone_number || ''
     userId.value = item.user_id || ''
+    brgyId.value = item.brgy_id
   }
 
   dialog.value = true
@@ -51,7 +56,7 @@ const handleSubmit = async () => {
     email: email.value,
     password: password.value,
     phone_number: phoneNumber.value,
-    brgy_id: 1,
+    brgy_id: brgyId.value,
   }
 
   if (isActionAdd.value) {
@@ -74,13 +79,17 @@ const resetFormValues = () => {
   email.value = ''
   phoneNumber.value = ''
   password.value = ''
-  brgyId.value = ''
+  brgyId.value = 0
 }
 
 const closeDialog = () => {
   resetFormValues()
   dialog.value = false
 }
+
+onMounted(async () => {
+  brgys.value = await getBrgys()
+})
 </script>
 
 <template>
@@ -97,6 +106,8 @@ const closeDialog = () => {
           <v-text-field label="Phone Number (optional)" v-model="phoneNumber" type="number"></v-text-field>
           <v-select label="* Select Role" :items="['user', 'admin']" v-model="role" required
             :rules="[v => !!v || 'Role is required.']"></v-select>
+          <v-autocomplete label="* Select Assigned Barangay" :items="brgys" v-model="brgyId" item-title="name"
+            item-value="id" required :rules="[v => !!v || 'Assign Barangay is required.']"></v-autocomplete>
           <v-text-field v-if="isActionAdd" label="* Email Address" type="email"
             :rules="[v => !!v || 'Email is required.']" required v-model="email" persistent-hint></v-text-field>
           <v-text-field label="* Password" type="password" :rules="[v => !isActionAdd || !!v || 'Password is required.']"
