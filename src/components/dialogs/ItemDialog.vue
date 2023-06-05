@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ItemWithBrand } from '@/types/item.interface';
+import { Item, ItemAdd } from '@/types/item.interface';
 import { computed } from 'vue';
 import { ref } from 'vue';
 import { onMounted } from 'vue';
@@ -9,6 +9,7 @@ import { getBrands } from '@/services/BrandsService';
 import BrandDialog from './BrandDialog.vue';
 import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'
+import { addItem, updateItem } from '@/services/ItemsService';
 
 const dialog = ref<boolean>(false)
 const isActionAdd = ref<boolean>(true)
@@ -17,28 +18,26 @@ const isLoading = ref<boolean>(false)
 const isLoadingBrands = ref<boolean>(false)
 const brandDialog = ref()
 
+const id = ref<number>()
 const name = ref<string>('')
 const description = ref<string>('')
 const brandId = ref<number | null>()
 const expirationDate = ref<string>('')
 const dateManufactured = ref<string>('')
 const units = ref<string>('')
-const quantity = ref<number>(0)
+const quantity = ref<number | null>()
 const brands = ref<Brand[]>([])
 
-const disabledDates = {
-  from: new Date()
-}
-
-const show = (item: ItemWithBrand, addNewRow = true) => {
+const show = (item: Item, addNewRow = true) => {
   if (!addNewRow) {
+    id.value = item.id
     name.value = item.name || ''
     description.value = item.description || ''
     expirationDate.value = item.expirationDate || ''
     dateManufactured.value = item.dateManufactured || ''
     units.value = item.units || ''
     quantity.value = item.quantity || 0
-    brandId.value = item.brand?.id || null
+    brandId.value = item.brandId || null
   }
 
   dialog.value = true
@@ -58,6 +57,22 @@ const handleSubmit = async () => {
   // saving item
   isLoading.value = true
 
+  const itemData: Partial<Item> = {
+    name: name.value,
+    description: description.value,
+    brandId: brandId.value || 0,
+    expirationDate: expirationDate.value,
+    dateManufactured: dateManufactured.value,
+    units: units.value,
+    quantity: quantity.value || 0
+  }
+
+  if (isActionAdd.value) {
+    await addItem(itemData)
+  } else {
+    itemData.id = id.value
+    await updateItem(itemData)
+  }
 
   isLoading.value = false
 
@@ -67,12 +82,14 @@ const handleSubmit = async () => {
 }
 
 const resetFormValues = () => {
+  id.value = 0
   name.value = ''
-  brandId.value = 0
+  description.value = ''
+  brandId.value = null
   expirationDate.value = ''
   dateManufactured.value = ''
   units.value = ''
-  quantity.value = 0
+  quantity.value = null
 }
 
 const closeDialog = () => {
@@ -164,8 +181,10 @@ onMounted(() => {
 .dp__action_button {
   font-size: 12px;
 }
+
 label {
   display: block;
   color: #858585;
   font-size: 13px;
-}</style>
+}
+</style>

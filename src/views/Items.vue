@@ -5,6 +5,9 @@ import { Item } from '@/types/item.interface';
 import { ref } from 'vue';
 import ItemDialog from '@/components/dialogs/ItemDialog.vue'
 import { VDataTable } from 'vuetify/labs/VDataTable'
+import { deleteItem, getItems } from '@/services/ItemsService';
+import { onMounted } from 'vue';
+import ConfirmationDialog from '@/components/dialogs/ConfirmationDialog.vue'
 
 const headers: ITableHeader[] = [
   {
@@ -16,7 +19,7 @@ const headers: ITableHeader[] = [
   {
     title: 'Brand',
     align: 'start',
-    key: 'brand.name'
+    key: 'brands.name'
   },
   {
     title: 'Expiration Date',
@@ -45,37 +48,12 @@ const headers: ITableHeader[] = [
   }
 ]
 
-const items = [
-  {
-    id: 1,
-    name: 'Neozep',
-    description: 'Neozep® Non-Drowsy is for the relief of colds, without the drowse',
-    brand: {
-      id: 1,
-      name: 'Unilab'
-    },
-    expirationDate: '02/06/2023',
-    dateManufactured: '02/06/2023',
-    units: '10 mg',
-    quantity: 100
-  },
-  {
-    id: 2,
-    name: 'Bioflu',
-    description: 'Neozep® Non-Drowsy is for the relief of colds, without the drowse',
-    brand: {
-      id: 2,
-      name: 'Pfizer'
-    },
-    expirationDate: '07/06/2023',
-    dateManufactured: '07/06/2023',
-    units: '20 ml',
-    quantity: 50
-  },
-]
+const items = ref<Item[]>([])
+const isLoading = ref<boolean>(false)
 
 const search = ref<string>('')
 const itemDialog = ref()
+const confirmDialogDelete = ref()
 
 
 const showItemDialog = (item: Item, isActionAdd = true) => {
@@ -83,8 +61,20 @@ const showItemDialog = (item: Item, isActionAdd = true) => {
 }
 
 const fetchData = async () => {
-
+  isLoading.value = true
+  items.value = await getItems()
+  isLoading.value = false
 }
+
+const proceedDelete = async (item: Item) => {
+  await deleteItem(item.id)
+  confirmDialogDelete.value.close()
+  fetchData()
+}
+
+onMounted(() => {
+  fetchData()
+})
 </script>
 
 <template>
@@ -100,6 +90,10 @@ const fetchData = async () => {
       <!-- eslint-disable-next-line vue/valid-v-slot -->
       <template v-slot:item.action="{ item }">
         <v-btn icon="edit" flat size="small" @click="showItemDialog(item.raw, false)"></v-btn>
+        <v-btn color="red" variant="text" icon="delete" flat size="small" @click="confirmDialogDelete.show()"></v-btn>
+        <ConfirmationDialog ref="confirmDialogDelete" color="red-darken-4"
+            :message="`Are you sure you want to delete item?`" :width="400"
+            @confirm="proceedDelete(item.raw)" />
       </template>
     </v-data-table>
   </MainContent>

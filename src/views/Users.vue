@@ -81,7 +81,7 @@ onMounted(() => {
         <v-btn color="red" variant="text" icon="delete" flat size="small" @click="confirmDialogDelete.show()"></v-btn>
 
         <ConfirmationDialog ref="confirmDialogDelete" color="red-darken-4"
-          :message="`Are you sure you want to delete user ${item.raw.email}?`" :width="400"
+          :message="`Are you sure you want to delete user?`" :width="400"
           @confirm="proceedDelete(item.raw)" />
       </template>
     </v-data-table>
