@@ -3,7 +3,7 @@ import { UserAuthentication, UserProfile, UserProfileAddDto, UserProfileUpdateDt
 import { supabaseAdmin, supabaseClient } from './base/SupabaseService'
 
 export const getUsers = async (): Promise<UserProfile[]> => {
-  const { data, error } = await db.userProfile().select(`
+  const { data, error } = await db.userProfiles().select(`
     id,
     full_name,
     role,
@@ -59,7 +59,7 @@ export const updateUser = async (user: UserProfileUpdateDto & UserAuthentication
       phone_number,
       email
     }
-    const { error } = await db.userProfile().update(updateUserData).eq('user_id', user_id)
+    const { error } = await db.userProfiles().update(updateUserData).eq('user_id', user_id)
 
     if (error)
       throw error

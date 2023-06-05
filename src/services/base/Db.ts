@@ -1,6 +1,8 @@
 import { supabaseClient } from './SupabaseService';
 
 export const db = {
-  userProfile: () => supabaseClient().from('user_profiles'),
-  brgy: () => supabaseClient().from('brgy')
+  userProfiles: () => supabaseClient().from('user_profiles'),
+  brgys: () => supabaseClient().from('brgy'),
+  brands: () => supabaseClient().from('brands'),
+  items: () => supabaseClient().from('items')
 };
