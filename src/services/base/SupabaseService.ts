@@ -7,7 +7,7 @@ interface ISupabaseParams {
   supabaseUrl?: string;
   supabaseAnonKey?: string
 }
-export const supabase = (supabaseParams?: ISupabaseParams) => {
+export const supabaseClient = (supabaseParams?: ISupabaseParams) => {
   const supabaseUrl = supabaseParams?.supabaseUrl || supabaseUrlDefault
   const supabaseAnonKey = supabaseParams?.supabaseAnonKey || supabaseAnonKeyDefault
 

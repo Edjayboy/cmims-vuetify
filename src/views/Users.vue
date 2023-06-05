@@ -1,12 +1,12 @@
 <script lang="ts" setup>
 import { ITableHeader } from '@/interfaces/theme/table.interface';
-import { IUser } from '@/interfaces/user.interface';
 import MainContent from '@/layouts/MainContent.vue';
 import { onMounted, ref } from 'vue';
 import { VDataTable } from 'vuetify/labs/VDataTable'
 import UserDialog from '@/components/dialogs/UserDialog.vue'
 import { deleteUser, getUsers } from '@/services/UsersService';
 import ConfirmationDialog from '@/components/dialogs/ConfirmationDialog.vue';
+import { UserProfile } from '@/types/user.type';
 
 const headers = ref<ITableHeader[]>([
   {
@@ -34,26 +34,25 @@ const headers = ref<ITableHeader[]>([
     title: '',
   }
 ])
-const users = ref<IUser[]>([])
+const users = ref<UserProfile[]>([])
 const isLoading = ref<boolean>(false)
 
 const search = ref<string>('')
 const userDialog = ref()
 const confirmDialogDelete = ref()
 
-const showUserDialog = (item: IUser | unknown, isActionAdd = true) => {
+const showUserDialog = (item: UserProfile, isActionAdd = true) => {
   userDialog.value.show(item, isActionAdd)
 }
 
 const fetchData = async () => {
   isLoading.value = true
-  const { data } = await getUsers()
-  users.value = data
+  users.value = await getUsers()
   isLoading.value = false
 }
 
-const proceedDelete = async (item: IUser | unknown) => {
-  await deleteUser(item?.user_id || '')
+const proceedDelete = async (item: UserProfile) => {
+  await deleteUser(item.user_id || '')
   confirmDialogDelete.value.close()
   fetchData()
 }

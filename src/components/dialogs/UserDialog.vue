@@ -1,30 +1,30 @@
 <script setup lang="ts">
-import { UserRole, IUserDto } from '@/interfaces/user.interface';
 import { computed } from 'vue';
 import { ref } from 'vue';
 import { addUser, updateUser } from '@/services/UsersService'
+import { UserProfileUpdateDto, UserAuthentication } from '@/types/user.type';
 
 const dialog = ref<boolean>(false)
 const isActionAdd = ref<boolean>(true)
 const form = ref()
 
-const id = ref<number | string>('')
-const fullName = ref<string>('')
-const role = ref<UserRole>('user')
+const fullName = ref<string | undefined>('')
+const role = ref<string | undefined>('')
 const email = ref<string>('')
 const password = ref<string>('')
-const phoneNumber = ref<string | number>('')
+const phoneNumber = ref<string>('')
 const brgyId = ref<string | number>('')
 const userId = ref<string>('')
 const isLoading = ref<boolean>(false)
 
-const show = (item?: IUserDto, addNewRow = true) => {
-  id.value = item?.id || ''
-  fullName.value = item?.full_name || ''
-  role.value = item?.role || 'user'
-  email.value = item?.email || ''
-  phoneNumber.value = item?.phone_number || ''
-  userId.value = item?.user_id || ''
+const show = (item: UserProfileUpdateDto, addNewRow = true) => {
+  if (!addNewRow) {
+    fullName.value = item.full_name
+    role.value = item.role
+    email.value = item.email
+    phoneNumber.value = item?.phone_number || ''
+    userId.value = item.user_id || ''
+  }
 
   dialog.value = true
   isActionAdd.value = addNewRow
@@ -45,7 +45,7 @@ const handleSubmit = async () => {
   // saving user
   isLoading.value = true
 
-  const userData: IUserDto = {
+  const userData: UserProfileUpdateDto & UserAuthentication = {
     full_name: fullName.value,
     role: role.value,
     email: email.value,
@@ -69,7 +69,6 @@ const handleSubmit = async () => {
 }
 
 const resetFormValues = () => {
-  id.value = ''
   fullName.value = ''
   role.value = 'user'
   email.value = ''

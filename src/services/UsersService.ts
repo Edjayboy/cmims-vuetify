@@ -1,29 +1,34 @@
-import { IUpdateUser, IUser, IUserDto } from '@/interfaces/user.interface'
-import { supabase, supabaseAdmin } from './base/SupabaseService'
-import { ISupabaseResponse } from '@/interfaces/supabase.interface'
+import { db } from './base/Db'
+import { UserAuthentication, UserProfile, UserProfileAddDto, UserProfileUpdateDto } from '@/types/user.type'
+import { supabaseAdmin, supabaseClient } from './base/SupabaseService'
 
-export const getUsers = async (): Promise<ISupabaseResponse<IUser[]>> => {
-  return supabase()
-    .from('user_profiles')
-    .select(`
-        id,
-        full_name,
-        role,
-        email,
-        brgy_id,
-        phone_number,
-        user_id,
-        brgy (
-          id,
-          name
-        )
-      `)
+export const getUsers = async (): Promise<UserProfile[]> => {
+  const { data, error } = await db.userProfile().select(`
+    id,
+    full_name,
+    role,
+    email,
+    brgy_id,
+    phone_number,
+    user_id,
+    brgy (
+      id,
+      name
+    )`
+  ).returns<UserProfile[]>()
+
+  if (error) {
+    console.log(error)
+    return []
+  }
+
+  return data
 }
 
-export const addUser = async (user: IUserDto) => {
+export const addUser = async (user: UserProfileAddDto) => {
   try {
-    const { email, password = '' } = user
-    await supabase().auth.signUp({
+    const { email, password } = user
+    await supabaseClient().auth.signUp({
       email,
       password,
       options: {
@@ -38,42 +43,36 @@ export const addUser = async (user: IUserDto) => {
   }
 }
 
-export const updateUser = async (user: IUserDto): Promise<IUpdateUser> => {
-  const { password, email, user_id, full_name, brgy_id, role, phone_number } = user
+export const updateUser = async (user: UserProfileUpdateDto & UserAuthentication): Promise<void> => {
+  const { password, user_id, full_name, brgy_id, role, phone_number, email } = user
 
   try {
     // leave the password blank
     if (password) {
-      await supabase().auth.updateUser({ password })
+      await supabaseClient().auth.updateUser({ password })
     }
 
-    const userProfile = {
+    const updateUserData: Omit<UserProfileUpdateDto, 'user_id'> = {
       full_name,
       brgy_id,
       role,
-      email,
-      phone_number
+      phone_number,
+      email
     }
+    const { error } = await db.userProfile().update(updateUserData).eq('user_id', user_id)
 
-    const { data } = await supabase().from('user_profiles').update(userProfile).eq('user_id', user_id)
+    if (error)
+      throw error
 
-    return {
-      data,
-      error: null
-    }
   } catch (err) {
     console.log(err)
-    return {
-      data: null,
-      error: err
-    }
   }
-
 }
 
 export const deleteUser = async (user_id: string) => {
   if (!user_id)
     return
 
+  // Todo: this should be in backend not frontend
   await supabaseAdmin().auth.admin.deleteUser(user_id)
 }

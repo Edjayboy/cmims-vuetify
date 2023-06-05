@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { IItem } from '@/interfaces/item.interface';
 import { ITableHeader } from '@/interfaces/theme/table.interface';
 import MainContent from '@/layouts/MainContent.vue';
 import { ref } from 'vue';
@@ -39,7 +38,7 @@ const headers: ITableHeader[] = [
   },
 ]
 
-const items: IItem[] = [
+const items = [
   {
     id: 1,
     name: 'Neozep',
