@@ -70,3 +70,10 @@ export const updateUser = async (user: IUserDto): Promise<IUpdateUser> => {
   }
 
 }
+
+export const deleteUser = async (user_id: string) => {
+  if (!user_id)
+    return
+
+  await supabaseAdmin().auth.admin.deleteUser(user_id)
+}

@@ -22,11 +22,11 @@ withDefaults(defineProps<Props>(), {
 const show = () => {
   dialog.value = true
 }
-defineExpose({ show })
-
 const close = () => {
   dialog.value = false
 }
+defineExpose({ show, close })
+
 const confirm = () => {
   emits('confirm')
 }

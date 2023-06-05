@@ -5,7 +5,7 @@ import MainContent from '@/layouts/MainContent.vue';
 import { onMounted, ref } from 'vue';
 import { VDataTable } from 'vuetify/labs/VDataTable'
 import UserDialog from '@/components/dialogs/UserDialog.vue'
-import { getUsers } from '@/services/UsersService';
+import { deleteUser, getUsers } from '@/services/UsersService';
 import ConfirmationDialog from '@/components/dialogs/ConfirmationDialog.vue';
 
 const headers = ref<ITableHeader[]>([
@@ -52,8 +52,10 @@ const fetchData = async () => {
   isLoading.value = false
 }
 
-const proceedDelete = (item: IUser | unknown) => {
-  console.log(item)
+const proceedDelete = async (item: IUser | unknown) => {
+  await deleteUser(item?.user_id || '')
+  confirmDialogDelete.value.close()
+  fetchData()
 }
 
 onMounted(() => {
