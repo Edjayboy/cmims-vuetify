@@ -1,4 +1,5 @@
 // Composables
+import { getUserSession } from '@/services/AuthenticationService'
 import { createRouter, createWebHashHistory } from 'vue-router'
 
 const routes = [
@@ -41,6 +42,24 @@ const routes = [
 const router = createRouter({
   history: createWebHashHistory(process.env.BASE_URL),
   routes,
+})
+
+router.beforeEach(async (to, from) => {
+  const userSesion = await getUserSession()
+
+  // if (userSesion.data.session) {
+  //   console.log(userSesion.data.session)
+  //   console.log(userSesion)
+  //   next()
+  // } else {
+  //   next('/login')
+  // }
+  if ( // make sure the user is authenticated
+    !userSesion.data.session &&
+    // ❗️ Avoid an infinite redirect
+    to.name !== 'Login') {
+    return { name: 'Login' }
+  }
 })
 
 export default router

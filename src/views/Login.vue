@@ -1,24 +1,29 @@
 <script setup lang="ts">
 import { signInWithEmail } from '@/services/AuthenticationService';
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 const email = ref<string>('')
 const password = ref<string>('')
 const errorMessage = ref<string>('')
 const form = ref()
+const router = useRouter()
 
 const handleSubmit = async () => {
   const { valid } = await form.value.validate()
   if (!valid)
     return
 
-  const { data, error } = await signInWithEmail(email.value, password.value)
+  const { error } = await signInWithEmail(email.value, password.value)
 
   if (error) {
     errorMessage.value = error.message
     return
   }
 
+  router.push({
+    name: 'Dashboard'
+  })
 }
 
 </script>
@@ -36,7 +41,7 @@ const handleSubmit = async () => {
           <v-text-field v-model="password" label="Password" type="password" :rules="[v => !!v || 'Password is required.']"
             required></v-text-field>
         </v-form>
-        <v-btn color="primary" size="large" block @click="handleSubmit">Login</v-btn>
+        <v-btn color="primary" size="large" block @click="handleSubmit">Sign In</v-btn>
       </v-card-text>
     </v-card>
   </v-sheet>
