@@ -438,9 +438,12 @@ export interface paths {
         query: {
           id?: parameters["rowFilter.user_inventory_requests.id"];
           created_at?: parameters["rowFilter.user_inventory_requests.created_at"];
-          user_id?: parameters["rowFilter.user_inventory_requests.user_id"];
-          acknowledged_by?: parameters["rowFilter.user_inventory_requests.acknowledged_by"];
-          is_read?: parameters["rowFilter.user_inventory_requests.is_read"];
+          isRead?: parameters["rowFilter.user_inventory_requests.isRead"];
+          notes?: parameters["rowFilter.user_inventory_requests.notes"];
+          requestedById?: parameters["rowFilter.user_inventory_requests.requestedById"];
+          quantity?: parameters["rowFilter.user_inventory_requests.quantity"];
+          acknowledgedById?: parameters["rowFilter.user_inventory_requests.acknowledgedById"];
+          itemId?: parameters["rowFilter.user_inventory_requests.itemId"];
           /** Filtering Columns */
           select?: parameters["select"];
           /** Ordering */
@@ -493,9 +496,12 @@ export interface paths {
         query: {
           id?: parameters["rowFilter.user_inventory_requests.id"];
           created_at?: parameters["rowFilter.user_inventory_requests.created_at"];
-          user_id?: parameters["rowFilter.user_inventory_requests.user_id"];
-          acknowledged_by?: parameters["rowFilter.user_inventory_requests.acknowledged_by"];
-          is_read?: parameters["rowFilter.user_inventory_requests.is_read"];
+          isRead?: parameters["rowFilter.user_inventory_requests.isRead"];
+          notes?: parameters["rowFilter.user_inventory_requests.notes"];
+          requestedById?: parameters["rowFilter.user_inventory_requests.requestedById"];
+          quantity?: parameters["rowFilter.user_inventory_requests.quantity"];
+          acknowledgedById?: parameters["rowFilter.user_inventory_requests.acknowledgedById"];
+          itemId?: parameters["rowFilter.user_inventory_requests.itemId"];
         };
         header: {
           /** Preference */
@@ -512,9 +518,12 @@ export interface paths {
         query: {
           id?: parameters["rowFilter.user_inventory_requests.id"];
           created_at?: parameters["rowFilter.user_inventory_requests.created_at"];
-          user_id?: parameters["rowFilter.user_inventory_requests.user_id"];
-          acknowledged_by?: parameters["rowFilter.user_inventory_requests.acknowledged_by"];
-          is_read?: parameters["rowFilter.user_inventory_requests.is_read"];
+          isRead?: parameters["rowFilter.user_inventory_requests.isRead"];
+          notes?: parameters["rowFilter.user_inventory_requests.notes"];
+          requestedById?: parameters["rowFilter.user_inventory_requests.requestedById"];
+          quantity?: parameters["rowFilter.user_inventory_requests.quantity"];
+          acknowledgedById?: parameters["rowFilter.user_inventory_requests.acknowledgedById"];
+          itemId?: parameters["rowFilter.user_inventory_requests.itemId"];
         };
         body: {
           /** user_inventory_requests */
@@ -741,16 +750,33 @@ export interface definitions {
      * @default now()
      */
     created_at?: string;
-    /** Format: uuid */
-    user_id?: string;
+    /**
+     * Format: boolean
+     * @default false
+     */
+    isRead?: boolean;
+    /** Format: text */
+    notes?: string;
     /**
      * Format: uuid
      * @description Note:
-     * This is a Foreign Key to `profiles.id`.<fk table='profiles' column='id'/>
+     * This is a Foreign Key to `user_profiles.user_id`.<fk table='user_profiles' column='user_id'/>
      */
-    acknowledged_by?: string;
-    /** Format: boolean */
-    is_read?: boolean;
+    requestedById?: string;
+    /** Format: bigint */
+    quantity?: number;
+    /**
+     * Format: uuid
+     * @description Note:
+     * This is a Foreign Key to `user_profiles.user_id`.<fk table='user_profiles' column='user_id'/>
+     */
+    acknowledgedById?: string;
+    /**
+     * Format: bigint
+     * @description Note:
+     * This is a Foreign Key to `items.id`.<fk table='items' column='id'/>
+     */
+    itemId?: number;
   };
   brands: {
     /**
@@ -882,12 +908,18 @@ export interface parameters {
   "rowFilter.user_inventory_requests.id": string;
   /** Format: timestamp with time zone */
   "rowFilter.user_inventory_requests.created_at": string;
-  /** Format: uuid */
-  "rowFilter.user_inventory_requests.user_id": string;
-  /** Format: uuid */
-  "rowFilter.user_inventory_requests.acknowledged_by": string;
   /** Format: boolean */
-  "rowFilter.user_inventory_requests.is_read": string;
+  "rowFilter.user_inventory_requests.isRead": string;
+  /** Format: text */
+  "rowFilter.user_inventory_requests.notes": string;
+  /** Format: uuid */
+  "rowFilter.user_inventory_requests.requestedById": string;
+  /** Format: bigint */
+  "rowFilter.user_inventory_requests.quantity": string;
+  /** Format: uuid */
+  "rowFilter.user_inventory_requests.acknowledgedById": string;
+  /** Format: bigint */
+  "rowFilter.user_inventory_requests.itemId": string;
   /** @description brands */
   "body.brands": definitions["brands"];
   /** Format: bigint */

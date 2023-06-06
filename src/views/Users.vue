@@ -67,7 +67,7 @@ onMounted(() => {
     <template #top-right>
       <v-btn color="info" variant="outlined" @click="showUserDialog" prepend-icon="add">Add new user</v-btn>
     </template>
-    <v-text-field v-model="search" append-icon="search" label="Search" single-line hide-details></v-text-field>
+    <v-text-field v-model="search" append-inner-icon="search" label="Search" hide-details></v-text-field>
     <br />
     <v-data-table density="comfortable" :headers="headers" :items="users" item-value="name" class="elevation-0"
       :search="search" :loading="isLoading">

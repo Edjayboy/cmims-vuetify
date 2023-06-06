@@ -1,5 +1,5 @@
 import { db } from './base/Db'
-import { UserAuthentication, UserProfile, UserProfileAddDto, UserProfileUpdateDto } from '@/types/user.type'
+import { UserAuthentication, UserInventoryRequest, UserInventoryRequestAdd, UserProfile, UserProfileAddDto, UserProfileUpdateDto } from '@/types/user.type'
 import { supabaseAdmin, supabaseClient } from './base/SupabaseService'
 
 export const getUsers = async (): Promise<UserProfile[]> => {
@@ -75,4 +75,65 @@ export const deleteUser = async (user_id: string) => {
 
   // Todo: this should be in backend not frontend
   await supabaseAdmin().auth.admin.deleteUser(user_id)
+}
+
+export const getUserInventoryRequests = async (): Promise<UserInventoryRequest[]> => {
+  const { data, error } = await db.userInventoryRequests().select(`
+    id,
+    isRead,
+    notes,
+    quantity,
+    acknowledgedById,
+    itemId,
+    requestedById,
+    requestedBy:requestedById (
+      full_name,
+      brgy (
+        name
+      )
+    ),
+    acknowledgedBy:acknowledgedById (
+      full_name
+    ),
+    item:items (
+      name,
+      brand:brands (
+        name
+      ),
+      expirationDate,
+      dateManufactured,
+      units,
+      quantity
+    )
+  `).returns<UserInventoryRequest[]>()
+
+  if (error) {
+    console.log(error)
+    return []
+  }
+
+  return data
+}
+
+export const addUserInventoryRequest = async (userInventoryRequest: UserInventoryRequestAdd) => {
+  try {
+    const { error } = await db.userInventoryRequests().insert(userInventoryRequest)
+    if (error)
+      throw error
+  } catch (err) {
+    console.log(err)
+  }
+}
+
+export const updateUserInventoryRequest = async (userInventoryRequest: Partial<UserInventoryRequest>) => {
+  try {
+    if (!userInventoryRequest.id)
+      throw 'Update: No Id specified'
+
+    const { error } = await db.userInventoryRequests().update(userInventoryRequest).eq('id', userInventoryRequest.id)
+    if (error)
+      throw error
+  } catch (err) {
+    console.log(err)
+  }
 }

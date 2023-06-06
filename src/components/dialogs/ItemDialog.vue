@@ -149,7 +149,7 @@ onMounted(() => {
             <v-col cols="12" class="mt-5">
               <v-row>
                 <v-col>
-                  <v-autocomplete label="Select Brand" required v-model="brandId" :items="brands" item-title="name"
+                  <v-autocomplete label="Select Brand" :rules="[v => !!v || 'Brand is required.']" required v-model="brandId" :items="brands" item-title="name"
                     :disabled="isLoadingBrands" :loading="isLoadingBrands" item-value="id">
                     <template v-slot:append>
                       <v-slide-x-reverse-transition mode="out-in">

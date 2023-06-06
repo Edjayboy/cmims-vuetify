@@ -8,6 +8,7 @@ import { VDataTable } from 'vuetify/labs/VDataTable'
 import { deleteItem, getItems } from '@/services/ItemsService';
 import { onMounted } from 'vue';
 import ConfirmationDialog from '@/components/dialogs/ConfirmationDialog.vue'
+import DateFormat from '@/components/DateFormat.vue';
 
 const headers: ITableHeader[] = [
   {
@@ -22,14 +23,14 @@ const headers: ITableHeader[] = [
     key: 'brands.name'
   },
   {
-    title: 'Expiration Date',
-    align: 'start',
-    key: 'expirationDate'
-  },
-  {
     title: 'Date Manufactured',
     align: 'start',
     key: 'dateManufactured'
+  },
+  {
+    title: 'Expiration Date',
+    align: 'start',
+    key: 'expirationDate'
   },
   {
     title: 'Units',
@@ -83,17 +84,24 @@ onMounted(() => {
     <template #top-right>
       <v-btn color="info" variant="outlined" @click="showItemDialog" prepend-icon="add">Add new item</v-btn>
     </template>
-    <v-text-field v-model="search" append-icon="search" label="Search" single-line hide-details></v-text-field>
+    <v-text-field v-model="search" append-inner-icon="search" label="Search" hide-details></v-text-field>
     <br />
     <v-data-table density="comfortable" :headers="headers" :items="items" item-value="name" class="elevation-0"
       :search="search">
+      <!-- eslint-disable-next-line vue/valid-v-slot -->
+      <template v-slot:item.dateManufactured="{ item }">
+        <DateFormat :date="item.raw.dateManufactured" />
+      </template>
+      <!-- eslint-disable-next-line vue/valid-v-slot -->
+        <template v-slot:item.expirationDate="{ item }">
+          <DateFormat :date="item.raw.expirationDate" />
+        </template>
       <!-- eslint-disable-next-line vue/valid-v-slot -->
       <template v-slot:item.action="{ item }">
         <v-btn icon="edit" flat size="small" @click="showItemDialog(item.raw, false)"></v-btn>
         <v-btn color="red" variant="text" icon="delete" flat size="small" @click="confirmDialogDelete.show()"></v-btn>
         <ConfirmationDialog ref="confirmDialogDelete" color="red-darken-4"
-            :message="`Are you sure you want to delete item?`" :width="400"
-            @confirm="proceedDelete(item.raw)" />
+          :message="`Are you sure you want to delete item?`" :width="400" @confirm="proceedDelete(item.raw)" />
       </template>
     </v-data-table>
   </MainContent>
