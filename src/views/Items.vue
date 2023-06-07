@@ -9,6 +9,7 @@ import { deleteItem, getItems } from '@/services/ItemsService';
 import { onMounted } from 'vue';
 import ConfirmationDialog from '@/components/dialogs/ConfirmationDialog.vue'
 import DateFormat from '@/components/DateFormat.vue';
+import { useAuthentication } from '@/composables/useAuthentication';
 
 const headers: ITableHeader[] = [
   {
@@ -57,8 +58,8 @@ const itemDialog = ref()
 const confirmDialogDelete = ref()
 
 
-const showItemDialog = (item: Item, isActionAdd = true) => {
-  itemDialog.value.show(item, isActionAdd)
+const showItemDialog = (item: Item, isActionAdd = true, viewMode = false) => {
+  itemDialog.value.show(item, isActionAdd, viewMode)
 }
 
 const fetchData = async () => {
@@ -73,6 +74,7 @@ const proceedDelete = async (item: Item) => {
   fetchData()
 }
 
+const { isUser, isAdmin } = useAuthentication()
 onMounted(() => {
   fetchData()
 })
@@ -82,7 +84,7 @@ onMounted(() => {
   <MainContent icon="medical_services">
     <template #title>Track Inventory Items</template>
     <template #top-right>
-      <v-btn color="info" variant="outlined" @click="showItemDialog" prepend-icon="add">Add new item</v-btn>
+      <v-btn v-if="isUser" color="info" variant="outlined" @click="showItemDialog" prepend-icon="add">Add new item</v-btn>
     </template>
     <v-text-field v-model="search" append-inner-icon="search" label="Search" hide-details></v-text-field>
     <br />
@@ -93,15 +95,18 @@ onMounted(() => {
         <DateFormat :date="item.raw.dateManufactured" />
       </template>
       <!-- eslint-disable-next-line vue/valid-v-slot -->
-        <template v-slot:item.expirationDate="{ item }">
-          <DateFormat :date="item.raw.expirationDate" />
-        </template>
+      <template v-slot:item.expirationDate="{ item }">
+        <DateFormat :date="item.raw.expirationDate" />
+      </template>
       <!-- eslint-disable-next-line vue/valid-v-slot -->
       <template v-slot:item.action="{ item }">
-        <v-btn icon="edit" flat size="small" @click="showItemDialog(item.raw, false)"></v-btn>
-        <v-btn color="red" variant="text" icon="delete" flat size="small" @click="confirmDialogDelete.show()"></v-btn>
-        <ConfirmationDialog ref="confirmDialogDelete" color="red-darken-4"
-          :message="`Are you sure you want to delete item?`" :width="400" @confirm="proceedDelete(item.raw)" />
+        <v-btn v-if="isAdmin" icon="settings" flat size="small" @click="showItemDialog(item.raw, false, true)"></v-btn>
+        <div v-if="isUser">
+          <v-btn icon="edit" flat size="small" @click="showItemDialog(item.raw, false)"></v-btn>
+          <v-btn color="red" variant="text" icon="delete" flat size="small" @click="confirmDialogDelete.show()"></v-btn>
+          <ConfirmationDialog ref="confirmDialogDelete" color="red-darken-4"
+            :message="`Are you sure you want to delete item?`" :width="400" @confirm="proceedDelete(item.raw)" />
+        </div>
       </template>
     </v-data-table>
   </MainContent>

@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import { getItems } from '@/services/ItemsService';
 import { addUserInventoryRequest, updateUserInventoryRequest } from '@/services/UsersService'
-import { Item } from '@/types/item.interface';
+import { Item, ItemWithBrand } from '@/types/item.interface';
 import { UserInventoryRequest } from '@/types/user.type';
-import { onMounted } from 'vue';
-import { computed } from 'vue';
-import { ref } from 'vue';
+import { onMounted, ref, computed } from 'vue';
+import { useAuthentication } from '@/composables/useAuthentication'
 
 const dialog = ref<boolean>(false)
 const isActionAdd = ref<boolean>(true)
@@ -13,6 +12,7 @@ const form = ref()
 const isLoading = ref<boolean>(false)
 const isLoadingItems = ref<boolean>(false)
 const items = ref<Item[]>([])
+const { isAdmin } = useAuthentication()
 
 const id = ref<number | null>()
 const notes = ref<string>()
@@ -21,6 +21,7 @@ const requestedById = ref<string>()
 const acknowledgedById = ref<string>()
 const itemId = ref<number | null>()
 const isRead = ref<boolean>(false)
+const selectedItem = ref<ItemWithBrand>()
 
 const show = (item: UserInventoryRequest, addNewRow = true) => {
   if (!addNewRow) {
@@ -31,6 +32,7 @@ const show = (item: UserInventoryRequest, addNewRow = true) => {
     acknowledgedById.value = item.acknowledgedById
     itemId.value = item.itemId
     isRead.value = item.isRead || false
+    selectedItem.value = item.item
   }
 
   dialog.value = true
@@ -99,6 +101,10 @@ const closeDialog = () => {
 const fetchData = async () => {
   items.value = await getItems()
 }
+
+const selectItemLabel = computed(() => isAdmin.value ? 'Item Requested' : '* Select Item')
+const quantityLabel = computed(() => isAdmin.value ? 'Quantity Requested' : '* Select Item')
+
 onMounted(() => {
   fetchData()
 })
@@ -116,22 +122,50 @@ onMounted(() => {
             <v-checkbox v-if="!isActionAdd" v-model="isRead" label="Mark as read" color="success" :value="true"
               hide-details></v-checkbox>
             <v-col cols="12">
-              <v-autocomplete label="* Select Item" :rules="[v => !!v || 'Item is required.']" required v-model="itemId"
-                :items="items" :item-title="(item: Item) => `${item.name} - ${item.units}`" :disabled="isLoadingItems"
-                :loading="isLoadingItems" item-value="id">
+              <div v-if="isAdmin" class="mb-5">
+                <v-row>
+                  <v-col>
+                    <label>Item: </label>
+                    <p class="pa-3 view-mode-value">
+                      {{ selectedItem?.name }} - {{ selectedItem?.units }}
+                    </p>
+                  </v-col>
+                  <v-col>
+                    <label>Brand: </label>
+                    <p class="pa-3 view-mode-value">
+                      {{ selectedItem?.brand.name }}
+                    </p>
+                  </v-col>
+                </v-row>
+              </div>
+              <v-autocomplete v-else :label="selectItemLabel" :rules="[v => !!v || 'Item is required.']" required
+                v-model="itemId" :items="items" :item-title="(item: Item) => `${item.name} - ${item.units}`"
+                :disabled="isLoadingItems" :loading="isLoadingItems" item-value="id" :readonly="isAdmin">
               </v-autocomplete>
             </v-col>
             <v-col cols="12">
-              <v-text-field label="* Quantity Request" v-model="quantity" type="number"
+              <div v-if="isAdmin" class="mb-5">
+                <label>Quantity: </label>
+                <p class="pa-3 view-mode-value">
+                  {{ quantity }}
+                </p>
+              </div>
+              <v-text-field v-else :label="quantityLabel" v-model="quantity" type="number"
                 :rules="[v => !!v || 'Quantity is required.', v => (v > 0) || 'Quantity should be greater than zero']"
-                required>
+                required :readonly="isAdmin">
               </v-text-field>
             </v-col>
             <v-col cols="12">
-              <v-text-field label="Notes (optional)" v-model="notes">
+              <div v-if="isAdmin" class="mb-5">
+                <label>Notes: </label>
+                <p class="pa-3 view-mode-value">
+                  {{ notes }}
+                </p>
+              </div>
+              <v-text-field v-else label="Notes (optional)" v-model="notes" :readonly="isAdmin">
               </v-text-field>
             </v-col>
-            <small class="mt-5">*indicates required field</small>
+            <small v-if="!isAdmin" class="mt-5">*indicates required field</small>
           </v-row>
         </v-form>
       </v-card-text>
@@ -147,3 +181,8 @@ onMounted(() => {
     </v-card>
   </v-dialog>
 </template>
+<style scoped>
+.view-mode-value {
+  border: 1px solid #e3e3e3;
+}
+</style>

@@ -1,18 +1,19 @@
 <script setup lang="ts">
-import { Item, ItemAdd } from '@/types/item.interface';
+import { Item } from '@/types/item.interface';
 import { computed } from 'vue';
 import { ref } from 'vue';
 import { onMounted } from 'vue';
-// import Datepicker from 'vuejs3-datepicker';
 import { Brand } from '@/types/brand.interface';
 import { getBrands } from '@/services/BrandsService';
 import BrandDialog from './BrandDialog.vue';
 import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'
 import { addItem, updateItem } from '@/services/ItemsService';
+import DateFormat from '../DateFormat.vue';
 
 const dialog = ref<boolean>(false)
 const isActionAdd = ref<boolean>(true)
+const isViewMode = ref<boolean>(false)
 const form = ref()
 const isLoading = ref<boolean>(false)
 const isLoadingBrands = ref<boolean>(false)
@@ -27,8 +28,9 @@ const dateManufactured = ref<string>('')
 const units = ref<string>('')
 const quantity = ref<number | null>()
 const brands = ref<Brand[]>([])
+const brandName = ref<string>('')
 
-const show = (item: Item, addNewRow = true) => {
+const show = (item: Item, addNewRow = true, viewMode = false) => {
   if (!addNewRow) {
     id.value = item.id
     name.value = item.name || ''
@@ -38,15 +40,28 @@ const show = (item: Item, addNewRow = true) => {
     units.value = item.units || ''
     quantity.value = item.quantity || 0
     brandId.value = item.brandId || null
+
+    if (viewMode) {
+      const brand = brands.value.find(brand => brand.id == item.brandId) || { name: '' }
+      brandName.value = brand.name
+    }
   }
 
   dialog.value = true
   isActionAdd.value = addNewRow
+  isViewMode.value = viewMode
 }
 defineExpose({ show })
 const emit = defineEmits(['after-save'])
 
-const title = computed(() => isActionAdd.value ? 'Add New Item' : 'Update Item Information')
+const title = computed(() => {
+  if (isViewMode.value)
+    return 'View Item Information'
+
+  return isActionAdd.value ? 'Add New Item' : 'Update Item Information'
+})
+
+const closeBtnLabel = computed(() => isViewMode.value ? 'Close' : 'Cancel')
 
 const handleSubmit = async () => {
   const { valid } = await form.value.validate()
@@ -90,6 +105,7 @@ const resetFormValues = () => {
   dateManufactured.value = ''
   units.value = ''
   quantity.value = null
+  brandName.value = ''
 }
 
 const closeDialog = () => {
@@ -109,56 +125,70 @@ onMounted(() => {
 </script>
 
 <template>
-  <v-dialog v-model="dialog" persistent width="800">
+  <v-dialog v-model="dialog" :persistent="!isViewMode" width="800">
     <v-card>
       <v-card-title class="pl-6 pt-5 pb-0 font-weight-black">
-        <h3>{{ title }}</h3>
+        <h3 class="float-left">{{ title }}</h3>
+        <v-chip class="float-right" color="warning" variant="outlined" label text-color="white" v-if="isViewMode">
+          <v-icon start icon="visibility"></v-icon> View only
+        </v-chip>
       </v-card-title>
       <v-card-text>
         <v-form ref="form">
           <v-row no-gutters>
             <v-col cols="12">
-              <v-text-field label="* Name" :rules="[v => !!v || 'Name is required.']" required v-model="name">
+              <v-text-field label="* Name" :rules="[v => !!v || 'Name is required.']" required v-model="name"
+                :readonly="isViewMode">
               </v-text-field>
             </v-col>
             <v-col cols="12">
-              <v-text-field label="Description (optional)" required v-model="description">
+              <v-text-field label="Description (optional)" required v-model="description" :readonly="isViewMode">
               </v-text-field>
             </v-col>
             <v-col cols="6" class="pr-3">
               <v-text-field label="* Quantity" :rules="[v => !!v || 'Quantity is required.']" required type="number"
-                v-model="quantity">
+                v-model="quantity" :readonly="isViewMode">
               </v-text-field>
             </v-col>
             <v-col cols="6" class="pl-3">
               <v-text-field class="mb-3" label="* Units" :rules="[v => !!v || 'Units is required.']" required
-                v-model="units" hint="e.g 10mg" persistent-hint>
+                v-model="units" hint="e.g 10mg" persistent-hint :readonly="isViewMode">
               </v-text-field>
             </v-col>
             <v-col cols="6" class="pr-3">
-              <!-- <CustomDatePicker label="Manufactured Date" v-model="dateManufactured" /> -->
               <label>Manufactured Date:</label>
-              <VueDatePicker v-model="dateManufactured" placeholder="Select Manufactured Date"
+              <p v-if="isViewMode" class="pa-3 view-mode-value">
+                <DateFormat :date="dateManufactured" />
+              </p>
+              <VueDatePicker v-else v-model="dateManufactured" placeholder="Select Manufactured Date"
                 :enable-time-picker="false"></VueDatePicker>
+
             </v-col>
             <v-col cols="6" class="pl-3">
               <label>Expiration Date:</label>
-              <VueDatePicker v-model="expirationDate" placeholder="Select Expiration Date" :enable-time-picker="false">
+              <p v-if="isViewMode" class="pa-3 view-mode-value">
+                <DateFormat :date="expirationDate" />
+              </p>
+              <VueDatePicker v-else v-model="expirationDate" placeholder="Select Expiration Date"
+                :enable-time-picker="false">
               </VueDatePicker>
             </v-col>
             <v-col cols="12" class="mt-5">
-              <v-row>
-                <v-col>
-                  <v-autocomplete label="Select Brand" :rules="[v => !!v || 'Brand is required.']" required v-model="brandId" :items="brands" item-title="name"
-                    :disabled="isLoadingBrands" :loading="isLoadingBrands" item-value="id">
-                    <template v-slot:append>
-                      <v-slide-x-reverse-transition mode="out-in">
-                        <v-icon color="primary" icon="add" @click="brandDialog.show()"></v-icon>
-                      </v-slide-x-reverse-transition>
-                    </template>
-                  </v-autocomplete>
-                </v-col>
-              </v-row>
+              <div v-if="isViewMode">
+                <label>Brand: </label>
+                <p class="pa-3 view-mode-value">
+                  {{ brandName }}
+                </p>
+              </div>
+              <v-autocomplete v-else label="Select Brand" :rules="[v => !!v || 'Brand is required.']" required
+                v-model="brandId" :items="brands" item-title="name" :disabled="isLoadingBrands" :loading="isLoadingBrands"
+                item-value="id">
+                <template v-slot:append v-if="!isViewMode">
+                  <v-slide-x-reverse-transition mode="out-in">
+                    <v-icon color="primary" icon="add" @click="brandDialog.show()"></v-icon>
+                  </v-slide-x-reverse-transition>
+                </template>
+              </v-autocomplete>
             </v-col>
             <small class="mt-5">*indicates required field</small>
           </v-row>
@@ -167,9 +197,9 @@ onMounted(() => {
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn color="blue-darken-1" variant="text" @click="closeDialog" :disabled="isLoading">
-          Cancel
+          {{ closeBtnLabel }}
         </v-btn>
-        <v-btn color="primary" @click="handleSubmit" :disabled="isLoading">
+        <v-btn v-if="!isViewMode" color="primary" @click="handleSubmit" :disabled="isLoading">
           Submit
         </v-btn>
       </v-card-actions>
@@ -186,5 +216,9 @@ label {
   display: block;
   color: #858585;
   font-size: 13px;
+}
+
+.view-mode-value {
+  border: 1px solid #e3e3e3;
 }
 </style>

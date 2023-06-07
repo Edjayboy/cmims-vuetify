@@ -46,14 +46,6 @@ const router = createRouter({
 
 router.beforeEach(async (to, from) => {
   const userSesion = await getUserSession()
-
-  // if (userSesion.data.session) {
-  //   console.log(userSesion.data.session)
-  //   console.log(userSesion)
-  //   next()
-  // } else {
-  //   next('/login')
-  // }
   if ( // make sure the user is authenticated
     !userSesion.data.session &&
     // ❗️ Avoid an infinite redirect

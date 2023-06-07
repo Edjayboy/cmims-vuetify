@@ -12,10 +12,10 @@ export type UserAuthentication = {
 export type UserProfileAddDto = UserProfileAdd & UserAuthentication
 export type UserProfileUpdateDto = Omit<UserProfile, 'id' | 'created_at'>
 
-export type UserInventoryRequest = definitions['user_inventory_requests'] & Pick<UserProfile, 'full_name' | 'email' | 'brgy_id'> & Pick<Brgy, 'name'> & {
+export type UserInventoryRequest = definitions['user_inventory_requests'] & {
   acknowledgedBy: UserProfile,
   requestedBy: UserProfile
-  items: ItemWithBrand
+  item: ItemWithBrand
 }
 
 export type UserInventoryRequestAdd = Pick<UserInventoryRequest, 'notes' | 'quantity' | 'requestedById' | 'itemId'>

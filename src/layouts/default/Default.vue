@@ -3,12 +3,12 @@
 <script lang="ts" setup>
 import { useAuthentication } from '@/composables/useAuthentication';
 import { ISidebarNavigation } from '@/interfaces/theme/sidebar.interface';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { signOut } from '@/services/AuthenticationService'
 import { useRouter } from 'vue-router'
 
 const drawer = ref<boolean>(true)
-const navigation = ref<ISidebarNavigation[]>([
+const navigation: ISidebarNavigation[] = [
   {
     icon: 'dashboard',
     label: 'Dashboard',
@@ -28,10 +28,13 @@ const navigation = ref<ISidebarNavigation[]>([
     icon: 'manage_accounts',
     label: 'Users',
     link: '/users',
-  },
-])
+    isAdmin: true
+  }
+]
 
-const { fullName } = useAuthentication()
+const userNavigation: ISidebarNavigation[] = navigation.filter(nav => !nav.isAdmin) || []
+
+const { fullName, isAdmin } = useAuthentication()
 const router = useRouter()
 
 const handleSignOut = async () => {
@@ -41,6 +44,10 @@ const handleSignOut = async () => {
     name: 'Login'
   })
 }
+
+const filteredNavigation = computed(() => {
+  return isAdmin.value ? navigation : userNavigation
+})
 </script>
 
 <template>
@@ -67,7 +74,7 @@ const handleSignOut = async () => {
 
     <v-navigation-drawer v-model="drawer">
       <v-list>
-        <v-list-item v-for="(nav, index) in navigation" :key="index" :prepend-icon="nav.icon" :title="nav.label"
+        <v-list-item v-for="(nav, index) in filteredNavigation" :key="index" :prepend-icon="nav.icon" :title="nav.label"
           :value="index" :to="nav.link"></v-list-item>
       </v-list>
     </v-navigation-drawer>

@@ -6,6 +6,7 @@ import { UserProfileUpdateDto, UserAuthentication } from '@/types/user.type';
 import { Brgy } from '@/types/brgy.type';
 import { getBrgys } from '@/services/BrgyService'
 import { onMounted } from 'vue';
+import { ROLE } from '@/constants/authentication';
 
 const dialog = ref<boolean>(false)
 const isActionAdd = ref<boolean>(true)
@@ -106,7 +107,7 @@ onMounted(async () => {
           <v-text-field label="Phone Number (optional)" v-model="phoneNumber" type="number"></v-text-field>
           <v-select label="* Select Role" :items="['user', 'admin']" v-model="role" required
             :rules="[v => !!v || 'Role is required.']"></v-select>
-          <v-autocomplete label="* Select Assigned Barangay" :items="brgys" v-model="brgyId" item-title="name"
+          <v-autocomplete v-if="role == ROLE.USER" label="* Select Assigned Barangay" :items="brgys" v-model="brgyId" item-title="name"
             item-value="id" required :rules="[v => !!v || 'Assign Barangay is required.']"></v-autocomplete>
           <v-text-field v-if="isActionAdd" label="* Email Address" type="email"
             :rules="[v => !!v || 'Email is required.']" required v-model="email" persistent-hint></v-text-field>
