@@ -121,7 +121,7 @@ onMounted(() => {
       <v-card-text>
         <v-form ref="form">
           <v-row no-gutters>
-            <v-checkbox v-if="!isActionAdd" v-model="isRead" label="Mark as read" color="success" :value="true"
+            <v-checkbox v-if="!isActionAdd && isAdmin" v-model="isRead" label="Mark as read" color="success" :value="true"
               hide-details></v-checkbox>
             <v-col cols="12">
               <div v-if="isAdmin" class="mb-5">
@@ -186,5 +186,6 @@ onMounted(() => {
 <style scoped>
 .view-mode-value {
   border: 1px solid #e3e3e3;
+  min-height: 50px;
 }
 </style>

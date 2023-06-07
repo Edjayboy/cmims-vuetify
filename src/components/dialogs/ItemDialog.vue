@@ -223,5 +223,6 @@ label {
 
 .view-mode-value {
   border: 1px solid #e3e3e3;
+  min-height: 50px;
 }
 </style>
