@@ -1,5 +1,4 @@
 // Composables
-import { getUserSession } from '@/services/AuthenticationService'
 import { useUserStore } from '@/store/user'
 import { createRouter, createWebHashHistory } from 'vue-router'
 

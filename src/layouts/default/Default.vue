@@ -5,7 +5,7 @@ import { ISidebarNavigation } from '@/interfaces/theme/sidebar.interface';
 import { computed, ref } from 'vue';
 import { signOut } from '@/services/AuthenticationService'
 import { useRouter } from 'vue-router'
-import { useUserStore } from '@/store/user';
+import { useAuthentication } from '@/composables/useAuthentication';
 
 const drawer = ref<boolean>(true)
 const navigation: ISidebarNavigation[] = [
@@ -34,7 +34,7 @@ const navigation: ISidebarNavigation[] = [
 
 const userNavigation: ISidebarNavigation[] = navigation.filter(nav => !nav.isAdmin) || []
 const router = useRouter()
-const store = useUserStore()
+const { isAdmin, fullName, brgyAssigned } = useAuthentication()
 
 const handleSignOut = async () => {
   await signOut()
@@ -45,12 +45,13 @@ const handleSignOut = async () => {
 }
 
 const filteredNavigation = computed(() => {
-  return store.isAdmin ? navigation : userNavigation
+  return isAdmin.value ? navigation : userNavigation
 })
 
-const fullName = computed(() => {
-  return store?.currentUser?.full_name || ''
+const assignedIndicator = computed(() => {
+  return isAdmin.value ? 'City Health Office' : `Brgy ${brgyAssigned.value.name}`
 })
+
 </script>
 
 <template>
@@ -61,12 +62,8 @@ const fullName = computed(() => {
       <v-toolbar-title>
         Centralized Medical Inventory Management System
       </v-toolbar-title>
-
-      <v-chip class="float-right" color="white">
-        Brgy Calumpang
-      </v-chip>
-      <v-btn id="menu-activator" append-icon="expand_more">
-        Good Day, {{ fullName }}
+      <v-btn id="menu-activator" append-icon="expand_more" class="ml-1">
+        {{ fullName }} | ({{ assignedIndicator }})
       </v-btn>
 
       <v-menu activator="#menu-activator">

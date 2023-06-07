@@ -1,4 +1,3 @@
-import { CurrentUserMetaData } from "@/types/authentication.interface";
 import { supabaseClient } from "./base/SupabaseService"
 import { useUserStore } from '@/store/user';
 
@@ -9,14 +8,6 @@ export const signInWithEmail = async (email: string, password: string) => {
   })
 
   return { data, error }
-}
-
-export const getUserSession = (): CurrentUserMetaData => {
-  const store = useUserStore()
-  
-  return {
-    ...store.currentUser
-  }
 }
 
 export const signOut = async () => {

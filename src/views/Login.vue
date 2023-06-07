@@ -3,7 +3,6 @@ import { signInWithEmail } from '@/services/AuthenticationService';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useUserStore } from '@/store/user'
-import { onMounted } from 'vue';
 import { getUserByUuid } from '@/services/UsersService';
 
 const email = ref<string>('')
