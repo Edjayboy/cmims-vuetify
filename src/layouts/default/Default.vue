@@ -1,11 +1,11 @@
 
 
 <script lang="ts" setup>
-import { useAuthentication } from '@/composables/useAuthentication';
 import { ISidebarNavigation } from '@/interfaces/theme/sidebar.interface';
 import { computed, ref } from 'vue';
 import { signOut } from '@/services/AuthenticationService'
 import { useRouter } from 'vue-router'
+import { useUserStore } from '@/store/user';
 
 const drawer = ref<boolean>(true)
 const navigation: ISidebarNavigation[] = [
@@ -33,9 +33,8 @@ const navigation: ISidebarNavigation[] = [
 ]
 
 const userNavigation: ISidebarNavigation[] = navigation.filter(nav => !nav.isAdmin) || []
-
-const { fullName, isAdmin } = useAuthentication()
 const router = useRouter()
+const store = useUserStore()
 
 const handleSignOut = async () => {
   await signOut()
@@ -46,7 +45,11 @@ const handleSignOut = async () => {
 }
 
 const filteredNavigation = computed(() => {
-  return isAdmin.value ? navigation : userNavigation
+  return store.isAdmin ? navigation : userNavigation
+})
+
+const fullName = computed(() => {
+  return store?.currentUser?.full_name || ''
 })
 </script>
 
@@ -55,10 +58,15 @@ const filteredNavigation = computed(() => {
     <v-app-bar color="primary">
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
 
-      <v-toolbar-title>Centralized Medical Inventory Management System</v-toolbar-title>
+      <v-toolbar-title>
+        Centralized Medical Inventory Management System
+      </v-toolbar-title>
 
+      <v-chip class="float-right" color="white">
+        Brgy Calumpang
+      </v-chip>
       <v-btn id="menu-activator" append-icon="expand_more">
-        Howdy, {{ fullName }}
+        Good Day, {{ fullName }}
       </v-btn>
 
       <v-menu activator="#menu-activator">

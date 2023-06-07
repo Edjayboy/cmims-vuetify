@@ -2,6 +2,7 @@
 import { signInWithEmail } from '@/services/AuthenticationService';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { useUserStore } from '@/store/user'
 
 const email = ref<string>('')
 const password = ref<string>('')
@@ -9,6 +10,7 @@ const errorMessage = ref<string>('')
 const form = ref()
 const router = useRouter()
 const isLoading = ref<boolean>(false)
+const userStore = useUserStore()
 
 const handleSubmit = async () => {
   const { valid } = await form.value.validate()
@@ -16,8 +18,13 @@ const handleSubmit = async () => {
     return
 
   isLoading.value = true
-  const { error } = await signInWithEmail(email.value, password.value)
+  const { data, error } = await signInWithEmail(email.value, password.value)
   isLoading.value = false
+  
+
+  userStore.setAccessToken(data.session?.access_token)
+  userStore.setCurrentUser(data.user?.user_metadata)
+  userStore.setCurrentUserUuid(data.user?.id)
 
   if (error) {
     errorMessage.value = error.message

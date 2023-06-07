@@ -1,4 +1,6 @@
+import { CurrentUserMetaData } from "@/types/authentication.interface";
 import { supabaseClient } from "./base/SupabaseService"
+import { useUserStore } from '@/store/user';
 
 export const signInWithEmail = async (email: string, password: string) => {
   const { data, error } = await supabaseClient().auth.signInWithPassword({
@@ -9,12 +11,22 @@ export const signInWithEmail = async (email: string, password: string) => {
   return { data, error }
 }
 
-export const getUserSession = async () => {
-  return await supabaseClient().auth.getSession()
+export const getUserSession = (): CurrentUserMetaData => {
+  const store = useUserStore()
+  
+  return {
+    ...store.currentUser
+  }
 }
 
 export const signOut = async () => {
   const { error } = await supabaseClient().auth.signOut()
+
+  // remove user store state
+  const userStore = useUserStore()
+  userStore.setAccessToken(undefined)
+  userStore.setCurrentUser(undefined)
+  userStore.setCurrentUserUuid(undefined)
 
   if (error) {
     console.log(error)

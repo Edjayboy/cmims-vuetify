@@ -10,6 +10,7 @@ import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'
 import { addItem, updateItem } from '@/services/ItemsService';
 import DateFormat from '../DateFormat.vue';
+import { useAuthentication } from '@/composables/useAuthentication'
 
 const dialog = ref<boolean>(false)
 const isActionAdd = ref<boolean>(true)
@@ -29,6 +30,7 @@ const units = ref<string>('')
 const quantity = ref<number | null>()
 const brands = ref<Brand[]>([])
 const brandName = ref<string>('')
+const { brgyAssignedId } = useAuthentication()
 
 const show = (item: Item, addNewRow = true, viewMode = false) => {
   if (!addNewRow) {
@@ -83,6 +85,7 @@ const handleSubmit = async () => {
   }
 
   if (isActionAdd.value) {
+    itemData.brgyId = brgyAssignedId.value
     await addItem(itemData)
   } else {
     itemData.id = id.value
@@ -125,7 +128,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <v-dialog v-model="dialog" :persistent="!isViewMode" width="800">
+  <v-dialog v-model="dialog" :persistent="!isViewMode" width="800" fullscreen>
     <v-card>
       <v-card-title class="pl-6 pt-5 pb-0 font-weight-black">
         <h3 class="float-left">{{ title }}</h3>

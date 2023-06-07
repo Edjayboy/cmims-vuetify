@@ -3,6 +3,7 @@ import { ref } from 'vue';
 
 const dialog = ref<boolean>(false)
 const emits = defineEmits(['confirm'])
+const data = ref()
 
 interface Props {
   title?: string;
@@ -19,8 +20,9 @@ withDefaults(defineProps<Props>(), {
   width: 300
 })
 
-const show = () => {
+const show = (data?: any) => {
   dialog.value = true
+  data.value = data
 }
 const close = () => {
   dialog.value = false
@@ -28,7 +30,7 @@ const close = () => {
 defineExpose({ show, close })
 
 const confirm = () => {
-  emits('confirm')
+  emits('confirm', data.value)
 }
 </script>
 <template>

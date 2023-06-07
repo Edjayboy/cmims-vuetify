@@ -1,27 +1,19 @@
-import { ROLE } from "@/constants/authentication"
-import { getUserSession } from "@/services/AuthenticationService"
-import { onMounted, ref } from "vue"
+import { computed } from "vue"
+import { useUserStore } from '@/store/user'
 
 export const useAuthentication = () => {
-  const fullName = ref<string | undefined>()
-  const userMetaData = ref()
-  const isAdmin = ref<boolean>()
-  const isUser = ref<boolean>()
-
-  onMounted(async () => {
-    const { data } = await getUserSession()
-
-    fullName.value = data.session?.user.user_metadata.full_name
-    userMetaData.value = data.session?.user.user_metadata
-    isAdmin.value = data.session?.user?.user_metadata?.role == ROLE.ADMIN
-    isUser.value = data.session?.user?.user_metadata?.role == ROLE.USER
-  })
+  const userStore = useUserStore()
+  const isUser = computed(() => userStore.isUser)
+  const isAdmin = computed(() => userStore.isAdmin)
+  const brgyAssignedId = computed(() => userStore.currentUser?.brgy_id || 0)
+  const currentUserId = computed(() => userStore?.currentUserUuid || '')
 
   return {
-    getUserSession,
-    fullName,
-    userMetaData,
+    // fullName,
+    // userMetaData,
+    currentUserId,
     isAdmin,
-    isUser
+    isUser,
+    brgyAssignedId
   }
 }

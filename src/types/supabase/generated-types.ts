@@ -226,6 +226,7 @@ export interface paths {
           units?: parameters["rowFilter.items.units"];
           brandId?: parameters["rowFilter.items.brandId"];
           quantity?: parameters["rowFilter.items.quantity"];
+          brgyId?: parameters["rowFilter.items.brgyId"];
           /** Filtering Columns */
           select?: parameters["select"];
           /** Ordering */
@@ -285,6 +286,7 @@ export interface paths {
           units?: parameters["rowFilter.items.units"];
           brandId?: parameters["rowFilter.items.brandId"];
           quantity?: parameters["rowFilter.items.quantity"];
+          brgyId?: parameters["rowFilter.items.brgyId"];
         };
         header: {
           /** Preference */
@@ -308,6 +310,7 @@ export interface paths {
           units?: parameters["rowFilter.items.units"];
           brandId?: parameters["rowFilter.items.brandId"];
           quantity?: parameters["rowFilter.items.quantity"];
+          brgyId?: parameters["rowFilter.items.brgyId"];
         };
         body: {
           /** items */
@@ -708,6 +711,12 @@ export interface definitions {
     brandId?: number;
     /** Format: bigint */
     quantity?: number;
+    /**
+     * Format: bigint
+     * @description Note:
+     * This is a Foreign Key to `brgy.id`.<fk table='brgy' column='id'/>
+     */
+    brgyId?: number;
   };
   user_profiles: {
     /**
@@ -884,6 +893,8 @@ export interface parameters {
   "rowFilter.items.brandId": string;
   /** Format: bigint */
   "rowFilter.items.quantity": string;
+  /** Format: bigint */
+  "rowFilter.items.brgyId": string;
   /** @description user_profiles */
   "body.user_profiles": definitions["user_profiles"];
   /** Format: bigint */

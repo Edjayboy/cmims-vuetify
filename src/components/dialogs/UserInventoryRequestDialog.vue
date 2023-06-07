@@ -12,7 +12,7 @@ const form = ref()
 const isLoading = ref<boolean>(false)
 const isLoadingItems = ref<boolean>(false)
 const items = ref<Item[]>([])
-const { isAdmin } = useAuthentication()
+const { isAdmin, currentUserId, brgyAssignedId } = useAuthentication()
 
 const id = ref<number | null>()
 const notes = ref<string>()
@@ -61,7 +61,7 @@ const handleSubmit = async () => {
     await addUserInventoryRequest({
       notes: notes.value,
       quantity: quantity.value,
-      requestedById: '0afa17e0-eb56-4c3e-a534-5a76af70ff9a',
+      requestedById: currentUserId.value,
       itemId: itemId.value || 0,
     })
   } else {
@@ -70,7 +70,7 @@ const handleSubmit = async () => {
       return
 
     await updateUserInventoryRequest({
-      acknowledgedById: 'f1114d77-5bea-4ebe-a786-b7c7b7a05ee2',
+      acknowledgedById: currentUserId.value,
       isRead: isRead.value,
       id: id.value
     })
@@ -99,11 +99,13 @@ const closeDialog = () => {
 }
 
 const fetchData = async () => {
-  items.value = await getItems()
+  items.value = await getItems({
+    brgyId: brgyAssignedId.value
+  })
 }
 
 const selectItemLabel = computed(() => isAdmin.value ? 'Item Requested' : '* Select Item')
-const quantityLabel = computed(() => isAdmin.value ? 'Quantity Requested' : '* Select Item')
+const quantityLabel = computed(() => isAdmin.value ? 'Quantity Requested' : '* Quantity')
 
 onMounted(() => {
   fetchData()

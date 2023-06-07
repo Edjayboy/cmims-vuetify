@@ -2,16 +2,64 @@
 import { ITableHeader } from '@/interfaces/theme/table.interface';
 import MainContent from '@/layouts/MainContent.vue';
 import { Item } from '@/types/item.interface';
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import ItemDialog from '@/components/dialogs/ItemDialog.vue'
 import { VDataTable } from 'vuetify/labs/VDataTable'
 import { deleteItem, getItems } from '@/services/ItemsService';
-import { onMounted } from 'vue';
 import ConfirmationDialog from '@/components/dialogs/ConfirmationDialog.vue'
 import DateFormat from '@/components/DateFormat.vue';
+import { useUserStore } from '@/store/user';
 import { useAuthentication } from '@/composables/useAuthentication';
+import { computed } from 'vue';
 
-const headers: ITableHeader[] = [
+const { isAdmin, isUser } = useAuthentication()
+
+const userHeaders: ITableHeader[] = [
+  {
+    title: 'Item Name',
+    align: 'start',
+    key: 'name',
+    fixed: false
+  },
+  {
+    title: 'Brand',
+    align: 'start',
+    key: 'brands.name'
+  },
+  {
+    title: 'Date Manufactured',
+    align: 'start',
+    key: 'dateManufactured'
+  },
+  {
+    title: 'Expiration Date',
+    align: 'start',
+    key: 'expirationDate'
+  },
+  {
+    title: 'Units',
+    align: 'start',
+    key: 'units'
+  },
+  {
+    title: 'Quantity',
+    align: 'center',
+    key: 'quantity'
+  },
+  {
+    title: '',
+    align: 'center',
+    key: 'action'
+  }
+]
+
+const adminHeaders: ITableHeader[] = [
+  {
+    title: 'Brgy',
+    align: 'start',
+    key: 'brgy.name',
+    fixed: false
+  },
   {
     title: 'Item Name',
     align: 'start',
@@ -56,7 +104,7 @@ const isLoading = ref<boolean>(false)
 const search = ref<string>('')
 const itemDialog = ref()
 const confirmDialogDelete = ref()
-
+const userStore = useUserStore()
 
 const showItemDialog = (item: Item, isActionAdd = true, viewMode = false) => {
   itemDialog.value.show(item, isActionAdd, viewMode)
@@ -64,7 +112,9 @@ const showItemDialog = (item: Item, isActionAdd = true, viewMode = false) => {
 
 const fetchData = async () => {
   isLoading.value = true
-  items.value = await getItems()
+  items.value = await getItems({
+    brgyId: userStore?._currentUser?.brgy_id
+  })
   isLoading.value = false
 }
 
@@ -74,7 +124,8 @@ const proceedDelete = async (item: Item) => {
   fetchData()
 }
 
-const { isUser, isAdmin } = useAuthentication()
+const headers = computed(() => isAdmin.value ? adminHeaders : userHeaders)
+
 onMounted(() => {
   fetchData()
 })

@@ -1,5 +1,6 @@
 // Composables
 import { getUserSession } from '@/services/AuthenticationService'
+import { useUserStore } from '@/store/user'
 import { createRouter, createWebHashHistory } from 'vue-router'
 
 const routes = [
@@ -44,10 +45,10 @@ const router = createRouter({
   routes,
 })
 
-router.beforeEach(async (to, from) => {
-  const userSesion = await getUserSession()
+router.beforeEach(async (to) => {
+  const userStore = useUserStore()
   if ( // make sure the user is authenticated
-    !userSesion.data.session &&
+    !userStore.accessToken &&
     // ❗️ Avoid an infinite redirect
     to.name !== 'Login') {
     return { name: 'Login' }

@@ -1,8 +1,8 @@
-import { Item, ItemAdd } from '@/types/item.interface'
+import { Item, ItemAdd, ItemFilter } from '@/types/item.interface'
 import { db } from './base/Db'
 
-export const getItems = async (): Promise<Item[]> => {
-  const { data, error } = await db.items().select(`
+export const getItems = async (filter: ItemFilter = {}): Promise<Item[]> => {
+  const selectQuery = `
     id,
     name,
     description,
@@ -14,9 +14,23 @@ export const getItems = async (): Promise<Item[]> => {
     brandId,
     brands (
       name
+    ),
+    brgyId,
+    brgy (
+      name
     )
-  `).returns<Item[]>()
+  `
+  if (filter.brgyId) {
+    const { data, error } = await db.items().select(selectQuery).eq('brgyId', filter.brgyId).returns<Item[]>()
+    if (error) {
+      console.log(error)
+      return []
+    }
 
+    return data
+  }
+
+  const { data, error } = await db.items().select(selectQuery).returns<Item[]>()
   if (error) {
     console.log(error)
     return []
@@ -57,7 +71,7 @@ export const deleteItem = async (id: number) => {
 
     if (error)
       throw error
-      
+
   } catch (err) {
     console.log(err)
   }
