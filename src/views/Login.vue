@@ -3,6 +3,8 @@ import { signInWithEmail } from '@/services/AuthenticationService';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useUserStore } from '@/store/user'
+import { onMounted } from 'vue';
+import { getUserByUuid } from '@/services/UsersService';
 
 const email = ref<string>('')
 const password = ref<string>('')
@@ -19,12 +21,14 @@ const handleSubmit = async () => {
 
   isLoading.value = true
   const { data, error } = await signInWithEmail(email.value, password.value)
+  
+  const currentUser = await getUserByUuid(data.user?.id)
+
   isLoading.value = false
   
-
   userStore.setAccessToken(data.session?.access_token)
-  userStore.setCurrentUser(data.user?.user_metadata)
-  userStore.setCurrentUserUuid(data.user?.id)
+  userStore.setCurrentUser(currentUser)
+  userStore.setCurrentUserUuid(currentUser.user_id)
 
   if (error) {
     errorMessage.value = error.message
@@ -35,7 +39,6 @@ const handleSubmit = async () => {
     name: 'Dashboard'
   })
 }
-
 </script>
 <template>
   <v-sheet max-width="400" class="mx-auto" style="margin-top: 10%;">

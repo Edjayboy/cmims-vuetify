@@ -7,7 +7,9 @@ import UserDialog from '@/components/dialogs/UserDialog.vue'
 import { deleteUser, getUsers } from '@/services/UsersService';
 import ConfirmationDialog from '@/components/dialogs/ConfirmationDialog.vue';
 import { UserProfile } from '@/types/user.type';
+import { useAuthentication } from '@/composables/useAuthentication'
 
+const { currentUserId } = useAuthentication()
 const headers = ref<ITableHeader[]>([
   {
     key: 'full_name',
@@ -78,11 +80,12 @@ onMounted(() => {
       <!-- eslint-disable-next-line vue/valid-v-slot -->
       <template v-slot:item.action="{ item }">
         <v-btn icon="edit" flat size="small" @click="showUserDialog(item.raw, false)"></v-btn>
-        <v-btn color="red" variant="text" icon="delete" flat size="small" @click="confirmDialogDelete.show()"></v-btn>
 
-        <ConfirmationDialog ref="confirmDialogDelete" color="red-darken-4"
-          :message="`Are you sure you want to delete user?`" :width="400"
-          @confirm="proceedDelete(item.raw)" />
+        <span v-if="currentUserId != item.raw.user_id">
+          <v-btn color="red" variant="text" icon="delete" flat size="small" @click="confirmDialogDelete.show()"></v-btn>
+          <ConfirmationDialog ref="confirmDialogDelete" color="red-darken-4"
+            :message="`Are you sure you want to delete user?`" :width="400" @confirm="proceedDelete(item.raw)" />
+        </span>
       </template>
     </v-data-table>
   </MainContent>

@@ -25,6 +25,32 @@ export const getUsers = async (): Promise<UserProfile[]> => {
   return data
 }
 
+export const getUserByUuid = async (uuid: string | undefined): Promise<Partial<UserProfile>> => {
+  if (!uuid)
+    return {}
+
+  const { data, error } = await db.userProfiles().select(`
+    id,
+    full_name,
+    role,
+    email,
+    brgy_id,
+    phone_number,
+    user_id,
+    brgy (
+      id,
+      name
+    )`
+  ).eq('user_id', uuid).returns<UserProfile>().single()
+
+  if (error) {
+    console.log(error)
+    return {}
+  }
+
+  return data
+}
+
 export const addUser = async (user: UserProfileAddDto) => {
   try {
     const { email, password } = user
