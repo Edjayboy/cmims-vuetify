@@ -143,8 +143,8 @@ onMounted(async () => {
         <Items title="Latest Inventory Requests" :custom-headers="userLatestAddedHeader" hide-search hide-pagination
           show-latest-only>
           <template #top-right>
-            <v-btn color="info" variant="text" size="small" href="#items" target="_blank" prepend-icon="open_in_new">View
-              items</v-btn>
+            <v-btn color="info" variant="text" size="small" href="#requests" target="_blank" prepend-icon="open_in_new">View
+              Requests</v-btn>
           </template>
         </Items>
       </v-col>

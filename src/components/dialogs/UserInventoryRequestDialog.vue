@@ -113,7 +113,8 @@ onMounted(() => {
 </script>
 
 <template>
-  <v-dialog v-model="dialog" persistent width="800">
+  <v-dialog v-model="dialog" persistent width="800" class="user-inventory-requests-dialog" fullscreen
+    transition="dialog-right-transition">
     <v-card>
       <v-card-title class="pl-6 pt-5 pb-0 font-weight-black">
         <h3>{{ title }}</h3>
@@ -183,9 +184,14 @@ onMounted(() => {
     </v-card>
   </v-dialog>
 </template>
-<style scoped>
+<style>
 .view-mode-value {
   border: 1px solid #e3e3e3;
   min-height: 50px;
+}
+
+.user-inventory-requests-dialog.v-dialog--fullscreen .v-overlay__content {
+  left: auto;
+  right: 0;
 }
 </style>

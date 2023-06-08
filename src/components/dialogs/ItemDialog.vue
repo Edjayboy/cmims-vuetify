@@ -226,7 +226,7 @@ label {
   min-height: 50px;
 }
 
-.item-dialog .v-overlay__content {
+.item-dialog.v-dialog--fullscreen .v-overlay__content {
   left: auto;
   right: 0;
 }

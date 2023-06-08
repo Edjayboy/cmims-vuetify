@@ -100,7 +100,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <v-dialog v-model="dialog" persistent width="700">
+  <v-dialog v-model="dialog" persistent width="700" fullscreen class="user-dialog" transition="dialog-right-transition">
     <v-card>
       <v-card-title class="pl-6 pt-5 pb-0 font-weight-black">
         <h3>{{ title }}</h3>
@@ -139,3 +139,9 @@ onMounted(async () => {
     </v-card>
   </v-dialog>
 </template>
+<style>
+.user-dialog.v-dialog--fullscreen .v-overlay__content {
+  left: auto;
+  right: 0;
+}
+</style> 
