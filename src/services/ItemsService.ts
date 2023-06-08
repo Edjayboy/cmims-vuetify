@@ -1,5 +1,6 @@
-import { Item, ItemAdd, ItemFilter } from '@/types/item.interface'
+import { GetTotalItems, Item, ItemAdd, ItemFilter } from '@/types/item.interface'
 import { db } from './base/Db'
+import { supabaseClient } from './base/SupabaseService'
 
 export const getItems = async (filter: ItemFilter = {}): Promise<Item[]> => {
   const selectQuery = `
@@ -75,4 +76,27 @@ export const deleteItem = async (id: number) => {
   } catch (err) {
     console.log(err)
   }
+}
+
+export const getTotalItems = async (filter: ItemFilter = {}): Promise<GetTotalItems> => {
+
+  if (filter.brgyId) {
+    const { data, error } = await supabaseClient()
+      .rpc('get_total_items_per_brgy', { brgy_id: filter.brgyId })
+
+    if (error)
+      console.log(error)
+
+    return data
+  }
+
+
+  const { data, error } = await supabaseClient()
+    .rpc('get_total_items')
+
+  if (error)
+    console.log(error)
+
+  return data
+
 }

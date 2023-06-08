@@ -1,7 +1,10 @@
 <script lang="ts" setup>
+import { useAuthentication } from '@/composables/useAuthentication';
 import { ITableHeader } from '@/interfaces/theme/table.interface';
 import MainContent from '@/layouts/MainContent.vue';
+import { getTotalItems } from '@/services/ItemsService';
 import Items from '@/views/Items.vue'
+import { onMounted, ref } from 'vue';
 
 const userLatestAddedHeader: ITableHeader[] = [
   {
@@ -31,6 +34,20 @@ const userLatestAddedHeader: ITableHeader[] = [
     key: 'action'
   }
 ]
+
+const { brgyAssignedId } = useAuthentication()
+const totalQuantity = ref<number>(0)
+const totalItems = ref<number>(0)
+const expiredItems = ref<number>(0)
+
+onMounted(async () => {
+  const { total_items, total_quantity, expired_items } = await getTotalItems({
+    brgyId: brgyAssignedId.value
+  })
+  totalQuantity.value = total_quantity
+  totalItems.value = total_items
+  expiredItems.value = expired_items
+})
 </script>
 <template>
   <MainContent icon="dashboard">
@@ -43,7 +60,7 @@ const userLatestAddedHeader: ITableHeader[] = [
               <v-icon icon="medication" size="50" class="align-self-center mx-3" color="success"></v-icon>
               <div class="ml-4 mr-1">
                 <h4 class="text-subtitle-1">Total Items</h4>
-                <h2 class="text-h5">10</h2>
+                <h2 class="text-h5">{{ totalItems }}</h2>
               </div>
             </div>
           </v-card-text>
@@ -56,7 +73,7 @@ const userLatestAddedHeader: ITableHeader[] = [
               <v-icon icon="medical_information" size="50" class="align-self-center mx-3" color="info"></v-icon>
               <div class="ml-4 mr-1">
                 <h4 class="text-subtitle-1">Total Quantity</h4>
-                <h2 class="text-h5">10</h2>
+                <h2 class="text-h5">{{ totalQuantity }} pcs</h2>
               </div>
             </div>
           </v-card-text>
@@ -69,7 +86,7 @@ const userLatestAddedHeader: ITableHeader[] = [
               <v-icon icon="warning_amber" size="50" class="align-self-center mx-3" color="warning"></v-icon>
               <div class="ml-4 mr-1">
                 <h4 class="text-subtitle-1">Expired Item(s)</h4>
-                <h2 class="text-h5">1</h2>
+                <h2 class="text-h5">{{ expiredItems }}</h2>
               </div>
             </div>
           </v-card-text>
@@ -81,8 +98,8 @@ const userLatestAddedHeader: ITableHeader[] = [
             <div class="d-flex align-center">
               <v-icon icon="category" size="50" class="align-self-center mx-3" color="primary"></v-icon>
               <div class="ml-4 mr-1">
-                <h4 class="text-subtitle-1">Total Brand(s)</h4>
-                <h2 class="text-h5">2</h2>
+                <h4 class="text-subtitle-1">Inventory Requests</h4>
+                <h2 class="text-h5"></h2>
               </div>
             </div>
           </v-card-text>
@@ -94,7 +111,8 @@ const userLatestAddedHeader: ITableHeader[] = [
         <Items title="Latest Items Added" :custom-headers="userLatestAddedHeader" hide-search hide-pagination
           show-latest-only>
           <template #top-right>
-            <v-btn color="info" variant="text" size="small" href="#items" target="_blank" prepend-icon="open_in_new">View items</v-btn>
+            <v-btn color="info" variant="text" size="small" href="#items" target="_blank" prepend-icon="open_in_new">View
+              items</v-btn>
           </template>
         </Items>
       </v-col>
