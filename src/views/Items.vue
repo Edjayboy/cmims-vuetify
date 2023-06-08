@@ -175,9 +175,9 @@ onMounted(() => {
         <v-btn v-if="isAdmin" icon="settings" flat size="small" @click="showItemDialog(item.raw, false, true)"></v-btn>
         <div v-if="isUser">
           <v-btn icon="edit" flat size="small" @click="showItemDialog(item.raw, false)"></v-btn>
-          <v-btn color="red" variant="text" icon="delete" flat size="small" @click="confirmDialogDelete.show()"></v-btn>
+          <v-btn color="red" variant="text" icon="delete" flat size="small" @click="confirmDialogDelete.show(item.raw)"></v-btn>
           <ConfirmationDialog ref="confirmDialogDelete" color="red-darken-4"
-            :message="`Are you sure you want to delete item?`" :width="400" @confirm="proceedDelete(item.raw)" />
+            :message="`Are you sure you want to delete item?`" :width="400" @confirm="proceedDelete" />
         </div>
       </template>
     </v-data-table>

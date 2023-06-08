@@ -82,9 +82,10 @@ onMounted(() => {
         <v-btn icon="edit" flat size="small" @click="showUserDialog(item.raw, false)"></v-btn>
 
         <span v-if="currentUserId != item.raw.user_id">
-          <v-btn color="red" variant="text" icon="delete" flat size="small" @click="confirmDialogDelete.show()"></v-btn>
+          <v-btn color="red" variant="text" icon="delete" flat size="small"
+            @click="confirmDialogDelete.show(item.raw)"></v-btn>
           <ConfirmationDialog ref="confirmDialogDelete" color="red-darken-4"
-            :message="`Are you sure you want to delete user?`" :width="400" @confirm="proceedDelete(item.raw)" />
+            :message="`Are you sure you want to delete user?`" :width="400" @confirm="proceedDelete" />
         </span>
       </template>
     </v-data-table>

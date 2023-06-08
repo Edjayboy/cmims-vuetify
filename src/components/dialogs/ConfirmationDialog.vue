@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 
 const dialog = ref<boolean>(false)
-const emits = defineEmits(['confirm'])
-const data = ref()
+const data = ref<any>()
 
 interface Props {
   title?: string;
@@ -20,18 +19,16 @@ withDefaults(defineProps<Props>(), {
   width: 300
 })
 
-const show = (data?: any) => {
+const show = (passData?: any) => {
   dialog.value = true
-  data.value = data
+  data.value = passData
 }
 const close = () => {
   dialog.value = false
 }
 defineExpose({ show, close })
 
-const confirm = () => {
-  emits('confirm', data.value)
-}
+const emits = defineEmits(['confirm'])
 </script>
 <template>
   <v-dialog v-model="dialog" transition="dialog-bottom-transition" :width="width">
@@ -45,7 +42,7 @@ const confirm = () => {
         </div>
         <div class="text-center">
           <v-btn variant="text" @click="close">Cancel</v-btn>
-          <v-btn :color="color" @click="confirm">{{ confirmButtonLabel }}</v-btn>
+          <v-btn :color="color" @click="emits('confirm', data)">{{ confirmButtonLabel }}</v-btn>
         </div>
       </v-card-text>
     </v-card>
