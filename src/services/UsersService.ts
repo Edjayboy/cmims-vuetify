@@ -1,5 +1,5 @@
 import { db } from './base/Db'
-import { UserAuthentication, UserInventoryRequest, UserInventoryRequestAdd, UserProfile, UserProfileAddDto, UserProfileUpdateDto } from '@/types/user.type'
+import { GetTotalUserInventoryRequest, UserAuthentication, UserInventoryRequest, UserInventoryRequestAdd, UserInventoryRequestFilter, UserProfile, UserProfileAddDto, UserProfileUpdateDto } from '@/types/user.type'
 import { supabaseAdmin, supabaseClient } from './base/SupabaseService'
 
 export const getUsers = async (): Promise<UserProfile[]> => {
@@ -162,4 +162,23 @@ export const updateUserInventoryRequest = async (userInventoryRequest: Partial<U
   } catch (err) {
     console.log(err)
   }
+}
+
+export const getTotalUserInventoryRequest = async (filter?: UserInventoryRequestFilter): Promise<GetTotalUserInventoryRequest> => {
+  if (filter?.brgyId) {
+    const { data, error } = await supabaseClient().rpc('get_total_user_inventory_requests_per_brgy', { brgy_id: filter?.brgyId })
+
+    if (error)
+      console.log(error)
+
+    return data
+  }
+
+
+  const { data, error } = await supabaseClient().rpc('get_total_user_inventory_requests')
+  if (error)
+    console.log(error)
+
+  console.log(data[0])
+  return data
 }
