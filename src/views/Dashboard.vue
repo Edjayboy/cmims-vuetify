@@ -104,7 +104,7 @@ onMounted(async () => {
         <v-card :loading="isLoadingTotalItems" :disabled="isLoadingTotalItems">
           <v-card-text class="pa-a5">
             <div class="d-flex align-center">
-              <v-icon icon="warning_amber" size="50" class="align-self-center mx-3" color="warning"></v-icon>
+              <v-icon icon="warning_amber" size="50" class="align-self-center mx-3" color="error"></v-icon>
               <div class="ml-4 mr-1">
                 <h4 class="text-subtitle-1">Expired Item(s)</h4>
                 <p v-if="isLoadingTotalItems" class="mb-3">Calculating data..</p>
@@ -118,7 +118,7 @@ onMounted(async () => {
         <v-card :loading="isLoadingTotalUserInventoryRequests" :disabled="isLoadingTotalUserInventoryRequests">
           <v-card-text class="pa-a5">
             <div class="d-flex align-center">
-              <v-icon icon="category" size="50" class="align-self-center mx-3" color="primary"></v-icon>
+              <v-icon icon="notification_important" size="50" class="align-self-center mx-3" color="warning"></v-icon>
               <div class="ml-4 mr-1">
                 <h4 class="text-subtitle-1">Inventory Requests</h4>
                 <p v-if="isLoadingTotalUserInventoryRequests" class="mb-3">Calculating data..</p>
