@@ -28,11 +28,6 @@ const userLatestAddedHeader: ITableHeader[] = [
     title: 'Quantity',
     align: 'center',
     key: 'quantity'
-  },
-  {
-    title: '',
-    align: 'center',
-    key: 'action'
   }
 ]
 
@@ -145,7 +140,13 @@ onMounted(async () => {
         </Items>
       </v-col>
       <v-col cols="6">
-        <Items title="Brands" :custom-headers="userLatestAddedHeader" hide-search hide-pagination show-latest-only />
+        <Items title="Latest Inventory Requests" :custom-headers="userLatestAddedHeader" hide-search hide-pagination
+          show-latest-only>
+          <template #top-right>
+            <v-btn color="info" variant="text" size="small" href="#items" target="_blank" prepend-icon="open_in_new">View
+              items</v-btn>
+          </template>
+        </Items>
       </v-col>
     </v-row>
   </MainContent>

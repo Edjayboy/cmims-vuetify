@@ -128,7 +128,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <v-dialog v-model="dialog" :persistent="!isViewMode" width="800" fullscreen>
+  <v-dialog v-model="dialog" :persistent="!isViewMode" width="800" fullscreen class="item-dialog" transition="dialog-right-transition">
     <v-card>
       <v-card-title class="pl-6 pt-5 pb-0 font-weight-black">
         <h3 class="float-left">{{ title }}</h3>
@@ -224,5 +224,10 @@ label {
 .view-mode-value {
   border: 1px solid #e3e3e3;
   min-height: 50px;
+}
+
+.item-dialog .v-overlay__content {
+  left: auto;
+  right: 0;
 }
 </style>
