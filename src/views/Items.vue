@@ -12,8 +12,23 @@ import { useUserStore } from '@/store/user';
 import { useAuthentication } from '@/composables/useAuthentication';
 import { computed } from 'vue';
 
-const { isAdmin, isUser } = useAuthentication()
+interface Props {
+  title?: string
+  customHeaders?: ITableHeader[],
+  hidePagination: boolean,
+  hideSearch: boolean,
+  showLatestOnly?: boolean
+}
 
+const props = withDefaults(defineProps<Props>(), {
+  title: 'Track Inventory Items',
+  customHeaders: () => [],
+  hidePagination: false,
+  hideSearch: false,
+  showLatestOnly: false
+})
+
+const { isAdmin, isUser } = useAuthentication()
 const userHeaders: ITableHeader[] = [
   {
     title: 'Item Name',
@@ -124,7 +139,12 @@ const proceedDelete = async (item: Item) => {
   fetchData()
 }
 
-const headers = computed(() => isAdmin.value ? adminHeaders : userHeaders)
+const headers = computed(() => { 
+  if (props.customHeaders.length > 0)
+    return props.customHeaders
+
+  return isAdmin.value ? adminHeaders : userHeaders 
+})
 
 onMounted(() => {
   fetchData()
@@ -133,14 +153,15 @@ onMounted(() => {
 
 <template>
   <MainContent icon="medical_services">
-    <template #title>Track Inventory Items</template>
+    <template #title>{{ title }}</template>
     <template #top-right>
-      <v-btn v-if="isUser" color="info" variant="outlined" @click="showItemDialog" prepend-icon="add">Add new item</v-btn>
+      <slot name="top-right">
+        <v-btn v-if="isUser && !showLatestOnly" color="info" variant="outlined" @click="showItemDialog" prepend-icon="add">Add new item</v-btn>
+      </slot>
     </template>
-    <v-text-field v-model="search" append-inner-icon="search" label="Search" hide-details></v-text-field>
-    <br />
+    <v-text-field v-if="!hideSearch" v-model="search" append-inner-icon="search" label="Search" hide-details></v-text-field>
     <v-data-table density="comfortable" :headers="headers" :items="items" item-value="name" class="elevation-0"
-      :search="search">
+      :search="search" :loading="isLoading" :hide-default-footer="hidePagination" :disable-pagination="hidePagination">
       <!-- eslint-disable-next-line vue/valid-v-slot -->
       <template v-slot:item.dateManufactured="{ item }">
         <DateFormat :date="item.raw.dateManufactured" />
