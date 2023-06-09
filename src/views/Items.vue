@@ -31,6 +31,12 @@ const props = withDefaults(defineProps<Props>(), {
 const { isAdmin, isUser } = useAuthentication()
 const userHeaders: ITableHeader[] = [
   {
+    title: 'ID',
+    align: 'start',
+    key: 'id',
+    fixed: false
+  },
+  {
     title: 'Item Name',
     align: 'start',
     key: 'name',
@@ -69,6 +75,12 @@ const userHeaders: ITableHeader[] = [
 ]
 
 const adminHeaders: ITableHeader[] = [
+  {
+    title: 'ID',
+    align: 'start',
+    key: 'id',
+    fixed: false
+  },
   {
     title: 'Brgy',
     align: 'start',

@@ -22,17 +22,16 @@ const handleSubmit = async () => {
   const { data, error } = await signInWithEmail(email.value, password.value)
   
   const currentUser = await getUserByUuid(data.user?.id)
-
-  isLoading.value = false
+  if (error) {
+    errorMessage.value = error.message
+    isLoading.value = false
+    return
+  }
   
   userStore.setAccessToken(data.session?.access_token)
   userStore.setCurrentUser(currentUser)
   userStore.setCurrentUserUuid(currentUser.user_id)
 
-  if (error) {
-    errorMessage.value = error.message
-    return
-  }
 
   router.push({
     name: 'Dashboard'
