@@ -4,12 +4,12 @@ import MainContent from '@/layouts/MainContent.vue';
 import { VDataTable } from 'vuetify/labs/VDataTable'
 import { getUserInventoryRequests } from '@/services/UsersService';
 import { UserInventoryRequest } from '@/types/user.type';
-import { onMounted } from 'vue';
+import { computed, onMounted } from 'vue';
 import { ref } from 'vue';
 import UserInventoryRequestDialog from '@/components/dialogs/UserInventoryRequestDialog.vue'
 import { useAuthentication } from '@/composables/useAuthentication';
 
-const headers: ITableHeader[] = [
+const defaultHeaders: ITableHeader[] = [
   {
     title: 'ID',
     align: 'start',
@@ -45,6 +45,20 @@ const headers: ITableHeader[] = [
     key: 'action'
   }
 ]
+interface Props {
+  title?: string
+  customHeaders?: ITableHeader[],
+  hidePagination?: boolean,
+  hideSearch?: boolean,
+  showLatestOnly?: boolean
+}
+const props = withDefaults(defineProps<Props>(), {
+  title: 'Manage Requests',
+  customHeaders: () => [],
+  hidePagination: false,
+  hideSearch: false,
+  showLatestOnly: false
+})
 
 const isLoading = ref<boolean>()
 const search = ref<string>('')
@@ -61,6 +75,13 @@ const showUserInventoryRequestDialog = (item: UserInventoryRequest, isActionAdd 
   userInventoryRequestDialog.value.show(item, isActionAdd)
 }
 
+const headers = computed(() => {
+  if (props.customHeaders.length > 0)
+    return props.customHeaders
+
+  return defaultHeaders
+})
+
 onMounted(() => {
   fetchData()
 })
@@ -68,13 +89,16 @@ onMounted(() => {
 </script>
 <template>
   <MainContent icon="fact_check">
-    <template #title>Manage Requests</template>
+    <template #title>{{ title }}</template>
     <template #top-right>
-      <v-btn v-if="isUser" color="info" variant="outlined" @click="showUserInventoryRequestDialog" prepend-icon="add">Add
-        new
-        request</v-btn>
+      <slot name="top-right">
+        <v-btn v-if="isUser" color="info" variant="outlined" @click="showUserInventoryRequestDialog" prepend-icon="add">
+          Add new request
+        </v-btn>
+      </slot>
     </template>
-    <v-text-field v-model="search" append-inner-icon="search" label="Search" hide-details single-line></v-text-field>
+    <v-text-field v-if="!hideSearch" v-model="search" append-inner-icon="search" label="Search" hide-details
+      single-line></v-text-field>
     <br />
     <v-data-table density="comfortable" :headers="headers" :items="userInventoryRequests" item-value="name"
       class="elevation-0" :search="search">
@@ -82,6 +106,7 @@ onMounted(() => {
       <template v-slot:item.action="{ item }">
         <v-btn icon="edit" flat size="small" @click="showUserInventoryRequestDialog(item.raw, false)"></v-btn>
       </template>
+      <template v-if="hidePagination" #bottom></template>
     </v-data-table>
   </MainContent>
   <UserInventoryRequestDialog ref="userInventoryRequestDialog" @after-save="fetchData" />

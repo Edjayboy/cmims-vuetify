@@ -15,8 +15,8 @@ import { computed } from 'vue';
 interface Props {
   title?: string
   customHeaders?: ITableHeader[],
-  hidePagination: boolean,
-  hideSearch: boolean,
+  hidePagination?: boolean,
+  hideSearch?: boolean,
   showLatestOnly?: boolean
 }
 
@@ -192,8 +192,8 @@ onMounted(() => {
             :message="`Are you sure you want to delete item?`" :width="400" @confirm="proceedDelete" />
         </div>
       </template>
+      <template v-if="hidePagination" #bottom></template>
     </v-data-table>
   </MainContent>
   <ItemDialog ref="itemDialog" @after-save="fetchData" />
 </template>
-
