@@ -1,4 +1,3 @@
-import { Brgy } from './brgy.type';
 import { ItemWithBrand } from './item.interface';
 import type { definitions } from './supabase/generated-types';
 

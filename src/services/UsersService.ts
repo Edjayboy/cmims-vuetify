@@ -1,5 +1,5 @@
 import { db } from './base/Db'
-import { GetTotalUserInventoryRequest, UserAuthentication, UserInventoryRequest, UserInventoryRequestAdd, UserInventoryRequestFilter, UserProfile, UserProfileAddDto, UserProfileUpdateDto } from '@/types/user.type'
+import { GetTotalUserInventoryRequest, UserInventoryRequest, UserInventoryRequestAdd, UserInventoryRequestFilter, UserProfile, UserProfileAddDto, UserProfileUpdateDto } from '@/types/user.type'
 import { supabaseAdmin, supabaseClient } from './base/SupabaseService'
 
 export const getUsers = async (): Promise<UserProfile[]> => {

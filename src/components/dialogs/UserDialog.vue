@@ -2,14 +2,14 @@
 import { computed } from 'vue';
 import { ref } from 'vue';
 import { addUser, updateUser } from '@/services/UsersService'
-import { UserProfileUpdateDto, UserAuthentication, UserProfileAddDto } from '@/types/user.type';
+import { UserProfileUpdateDto, UserProfileAddDto } from '@/types/user.type';
 import { Brgy } from '@/types/brgy.type';
 import { getBrgys } from '@/services/BrgyService'
 import { onMounted } from 'vue';
 import { ROLE } from '@/constants/authentication';
 import { useAuthentication } from '@/composables/useAuthentication';
 
-const { currentUserId, brgyAssignedId } = useAuthentication()
+const { currentUserId } = useAuthentication()
 const dialog = ref<boolean>(false)
 const isActionAdd = ref<boolean>(true)
 const form = ref()
