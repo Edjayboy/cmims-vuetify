@@ -10,7 +10,7 @@ export type UserAuthentication = {
 }
 
 export type UserProfileAddDto = UserProfileAdd & UserAuthentication
-export type UserProfileUpdateDto = Omit<UserProfile, 'id' | 'created_at'>
+export type UserProfileUpdateDto = Omit<UserProfile, 'id' | 'created_at'> & Partial<UserAuthentication>
 
 export type UserInventoryRequest = definitions['user_inventory_requests'] & {
   acknowledgedBy: UserProfile,

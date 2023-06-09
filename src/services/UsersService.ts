@@ -69,7 +69,7 @@ export const addUser = async (user: UserProfileAddDto) => {
   }
 }
 
-export const updateUser = async (user: UserProfileUpdateDto & UserAuthentication): Promise<void> => {
+export const updateUser = async (user: UserProfileUpdateDto): Promise<void> => {
   const { password, user_id, full_name, brgy_id, role, phone_number, email } = user
 
   try {

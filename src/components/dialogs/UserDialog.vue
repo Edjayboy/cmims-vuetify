@@ -2,21 +2,21 @@
 import { computed } from 'vue';
 import { ref } from 'vue';
 import { addUser, updateUser } from '@/services/UsersService'
-import { UserProfileUpdateDto, UserAuthentication } from '@/types/user.type';
+import { UserProfileUpdateDto, UserAuthentication, UserProfileAddDto } from '@/types/user.type';
 import { Brgy } from '@/types/brgy.type';
 import { getBrgys } from '@/services/BrgyService'
 import { onMounted } from 'vue';
 import { ROLE } from '@/constants/authentication';
 import { useAuthentication } from '@/composables/useAuthentication';
 
-const { currentUserId } = useAuthentication()
+const { currentUserId, brgyAssignedId } = useAuthentication()
 const dialog = ref<boolean>(false)
 const isActionAdd = ref<boolean>(true)
 const form = ref()
 
 const fullName = ref<string | undefined>('')
 const role = ref<string | undefined>('')
-const email = ref<string>('')
+const email = ref<string | undefined>('')
 const password = ref<string>('')
 const phoneNumber = ref<string>('')
 const brgyId = ref<number | undefined>()
@@ -28,8 +28,8 @@ const show = (item: UserProfileUpdateDto, addNewRow = true) => {
   if (!addNewRow) {
     fullName.value = item.full_name
     role.value = item.role
-    email.value = item.email
-    phoneNumber.value = item?.phone_number || ''
+    email.value = item.email || '',
+      phoneNumber.value = item?.phone_number || ''
     userId.value = item.user_id || ''
     brgyId.value = item.brgy_id
   }
@@ -53,24 +53,34 @@ const handleSubmit = async () => {
   // saving user
   isLoading.value = true
 
-  const userData: UserProfileUpdateDto & UserAuthentication = {
-    full_name: fullName.value,
-    role: role.value,
-    email: email.value,
-    password: password.value,
-    phone_number: phoneNumber.value
-  }
-
   if (isActionAdd.value) {
-    await addUser(userData)
-  } else {
-    userData.user_id = userId.value
+    if (!email.value)
+      return console.error("Email is required cannot proceed")
 
-    if (role.value == ROLE.USER) {
-      userData.brgy_id = brgyId.value
+    const userAddData: UserProfileAddDto = {
+      full_name: fullName.value,
+      role: role.value,
+      password: password.value,
+      phone_number: phoneNumber.value,
+      email: email.value,
+      brgy_id: brgyId.value
+    }
+    await addUser(userAddData)
+
+  } else {
+    const userUpdateData: UserProfileUpdateDto = {
+      full_name: fullName.value,
+      role: role.value,
+      phone_number: phoneNumber.value,
+      email: email.value,
+      user_id: userId.value
     }
 
-    await updateUser(userData)
+    if (role.value == ROLE.USER) {
+      userUpdateData.brgy_id = brgyId.value
+    }
+
+    await updateUser(userUpdateData)
   }
 
   isLoading.value = false
