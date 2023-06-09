@@ -18,7 +18,7 @@ export type UserInventoryRequest = definitions['user_inventory_requests'] & {
   item: ItemWithBrand
 }
 
-export type UserInventoryRequestAdd = Pick<UserInventoryRequest, 'notes' | 'quantity' | 'requestedById' | 'itemId'>
+export type UserInventoryRequestAdd = Pick<UserInventoryRequest, 'notes' | 'quantity' | 'requestedById' | 'itemId' | 'brgyId'>
 
 export type UserInventoryRequestFilter = {
   brgyId?: number | undefined

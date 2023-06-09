@@ -337,8 +337,8 @@ export interface paths {
           brgy_id?: parameters["rowFilter.user_profiles.brgy_id"];
           role?: parameters["rowFilter.user_profiles.role"];
           user_id?: parameters["rowFilter.user_profiles.user_id"];
-          email?: parameters["rowFilter.user_profiles.email"];
           phone_number?: parameters["rowFilter.user_profiles.phone_number"];
+          email?: parameters["rowFilter.user_profiles.email"];
           /** Filtering Columns */
           select?: parameters["select"];
           /** Ordering */
@@ -395,8 +395,8 @@ export interface paths {
           brgy_id?: parameters["rowFilter.user_profiles.brgy_id"];
           role?: parameters["rowFilter.user_profiles.role"];
           user_id?: parameters["rowFilter.user_profiles.user_id"];
-          email?: parameters["rowFilter.user_profiles.email"];
           phone_number?: parameters["rowFilter.user_profiles.phone_number"];
+          email?: parameters["rowFilter.user_profiles.email"];
         };
         header: {
           /** Preference */
@@ -417,8 +417,8 @@ export interface paths {
           brgy_id?: parameters["rowFilter.user_profiles.brgy_id"];
           role?: parameters["rowFilter.user_profiles.role"];
           user_id?: parameters["rowFilter.user_profiles.user_id"];
-          email?: parameters["rowFilter.user_profiles.email"];
           phone_number?: parameters["rowFilter.user_profiles.phone_number"];
+          email?: parameters["rowFilter.user_profiles.email"];
         };
         body: {
           /** user_profiles */
@@ -447,6 +447,7 @@ export interface paths {
           quantity?: parameters["rowFilter.user_inventory_requests.quantity"];
           acknowledgedById?: parameters["rowFilter.user_inventory_requests.acknowledgedById"];
           itemId?: parameters["rowFilter.user_inventory_requests.itemId"];
+          brgyId?: parameters["rowFilter.user_inventory_requests.brgyId"];
           /** Filtering Columns */
           select?: parameters["select"];
           /** Ordering */
@@ -505,6 +506,7 @@ export interface paths {
           quantity?: parameters["rowFilter.user_inventory_requests.quantity"];
           acknowledgedById?: parameters["rowFilter.user_inventory_requests.acknowledgedById"];
           itemId?: parameters["rowFilter.user_inventory_requests.itemId"];
+          brgyId?: parameters["rowFilter.user_inventory_requests.brgyId"];
         };
         header: {
           /** Preference */
@@ -527,6 +529,7 @@ export interface paths {
           quantity?: parameters["rowFilter.user_inventory_requests.quantity"];
           acknowledgedById?: parameters["rowFilter.user_inventory_requests.acknowledgedById"];
           itemId?: parameters["rowFilter.user_inventory_requests.itemId"];
+          brgyId?: parameters["rowFilter.user_inventory_requests.brgyId"];
         };
         body: {
           /** user_inventory_requests */
@@ -633,6 +636,97 @@ export interface paths {
       responses: {
         /** No Content */
         204: never;
+      };
+    };
+  };
+  "/rpc/get_total_user_inventory_requests_per_brgy": {
+    post: {
+      parameters: {
+        body: {
+          args: {
+            /** Format: integer */
+            brgy_id: number;
+          };
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferParams"];
+        };
+      };
+      responses: {
+        /** OK */
+        200: unknown;
+      };
+    };
+  };
+  "/rpc/get_total_user_inventory_requests": {
+    post: {
+      parameters: {
+        body: {
+          args: { [key: string]: unknown };
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferParams"];
+        };
+      };
+      responses: {
+        /** OK */
+        200: unknown;
+      };
+    };
+  };
+  "/rpc/get_total_items": {
+    post: {
+      parameters: {
+        body: {
+          args: { [key: string]: unknown };
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferParams"];
+        };
+      };
+      responses: {
+        /** OK */
+        200: unknown;
+      };
+    };
+  };
+  "/rpc/get_user_inventory_requests": {
+    post: {
+      parameters: {
+        body: {
+          args: { [key: string]: unknown };
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferParams"];
+        };
+      };
+      responses: {
+        /** OK */
+        200: unknown;
+      };
+    };
+  };
+  "/rpc/get_total_items_per_brgy": {
+    post: {
+      parameters: {
+        body: {
+          args: {
+            /** Format: integer */
+            brgy_id: number;
+          };
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferParams"];
+        };
+      };
+      responses: {
+        /** OK */
+        200: unknown;
       };
     };
   };
@@ -743,9 +837,9 @@ export interface definitions {
     /** Format: uuid */
     user_id?: string;
     /** Format: text */
-    email: string;
-    /** Format: text */
     phone_number?: string;
+    /** Format: text */
+    email?: string;
   };
   user_inventory_requests: {
     /**
@@ -786,6 +880,12 @@ export interface definitions {
      * This is a Foreign Key to `items.id`.<fk table='items' column='id'/>
      */
     itemId?: number;
+    /**
+     * Format: bigint
+     * @description Note:
+     * This is a Foreign Key to `brgy.id`.<fk table='brgy' column='id'/>
+     */
+    brgyId?: number;
   };
   brands: {
     /**
@@ -910,9 +1010,9 @@ export interface parameters {
   /** Format: uuid */
   "rowFilter.user_profiles.user_id": string;
   /** Format: text */
-  "rowFilter.user_profiles.email": string;
-  /** Format: text */
   "rowFilter.user_profiles.phone_number": string;
+  /** Format: text */
+  "rowFilter.user_profiles.email": string;
   /** @description user_inventory_requests */
   "body.user_inventory_requests": definitions["user_inventory_requests"];
   /** Format: bigint */
@@ -931,6 +1031,8 @@ export interface parameters {
   "rowFilter.user_inventory_requests.acknowledgedById": string;
   /** Format: bigint */
   "rowFilter.user_inventory_requests.itemId": string;
+  /** Format: bigint */
+  "rowFilter.user_inventory_requests.brgyId": string;
   /** @description brands */
   "body.brands": definitions["brands"];
   /** Format: bigint */

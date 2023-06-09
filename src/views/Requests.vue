@@ -8,7 +8,6 @@ import { onMounted } from 'vue';
 import { ref } from 'vue';
 import UserInventoryRequestDialog from '@/components/dialogs/UserInventoryRequestDialog.vue'
 import { useAuthentication } from '@/composables/useAuthentication';
-import { computed } from 'vue';
 
 const headers: ITableHeader[] = [
   {
@@ -19,7 +18,7 @@ const headers: ITableHeader[] = [
   {
     title: 'Brgy',
     align: 'start',
-    key: 'requestedBy.brgy.name',
+    key: 'brgy.name',
   },
   {
     title: 'Item',
@@ -51,11 +50,11 @@ const isLoading = ref<boolean>()
 const search = ref<string>('')
 const userInventoryRequests = ref<UserInventoryRequest[]>()
 const userInventoryRequestDialog = ref()
-const { isUser } = useAuthentication()
+const { isUser, brgyAssignedId } = useAuthentication()
 
 const fetchData = async () => {
   isLoading.value = true
-  userInventoryRequests.value = await getUserInventoryRequests()
+  userInventoryRequests.value = await getUserInventoryRequests({ brgyId: brgyAssignedId.value })
   isLoading.value = false
 }
 const showUserInventoryRequestDialog = (item: UserInventoryRequest, isActionAdd = true) => {
@@ -71,7 +70,8 @@ onMounted(() => {
   <MainContent icon="fact_check">
     <template #title>Manage Requests</template>
     <template #top-right>
-      <v-btn v-if="isUser" color="info" variant="outlined" @click="showUserInventoryRequestDialog" prepend-icon="add">Add new
+      <v-btn v-if="isUser" color="info" variant="outlined" @click="showUserInventoryRequestDialog" prepend-icon="add">Add
+        new
         request</v-btn>
     </template>
     <v-text-field v-model="search" append-inner-icon="search" label="Search" hide-details single-line></v-text-field>

@@ -103,8 +103,8 @@ export const deleteUser = async (user_id: string) => {
   await supabaseAdmin().auth.admin.deleteUser(user_id)
 }
 
-export const getUserInventoryRequests = async (): Promise<UserInventoryRequest[]> => {
-  const { data, error } = await db.userInventoryRequests().select(`
+export const getUserInventoryRequests = async (filter: UserInventoryRequestFilter = {}): Promise<UserInventoryRequest[]> => {
+  const selectQuery = `
     id,
     isRead,
     notes,
@@ -113,10 +113,10 @@ export const getUserInventoryRequests = async (): Promise<UserInventoryRequest[]
     itemId,
     requestedById,
     requestedBy:requestedById (
-      full_name,
-      brgy (
-        name
-      )
+      full_name
+    ),
+    brgy (
+      name
     ),
     acknowledgedBy:acknowledgedById (
       full_name
@@ -131,7 +131,19 @@ export const getUserInventoryRequests = async (): Promise<UserInventoryRequest[]
       units,
       quantity
     )
-  `).returns<UserInventoryRequest[]>()
+  `
+  if (filter.brgyId) {
+    const { data, error } = await db.userInventoryRequests().select(selectQuery).eq('brgyId', filter.brgyId).returns<UserInventoryRequest[]>()
+
+    if (error) {
+      console.log(error)
+      return []
+    }
+
+    return data
+  }
+
+  const { data, error } = await db.userInventoryRequests().select(selectQuery).returns<UserInventoryRequest[]>()
 
   if (error) {
     console.log(error)

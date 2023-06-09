@@ -63,6 +63,7 @@ const handleSubmit = async () => {
       quantity: quantity.value,
       requestedById: currentUserId.value,
       itemId: itemId.value || 0,
+      brgyId: brgyAssignedId.value
     })
   } else {
     // make sure that id has value
